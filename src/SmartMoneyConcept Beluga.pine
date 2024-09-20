@@ -1,10 +1,14 @@
 /// ╔═══════════════════════════════╗
 /// ║ 	Fvg Positioning Bar			║
+/// ╔═══════════════════════════════╗
+/// ║ 	Liquidity Void Fvg			║
+/// ║ 	Vacios de liquidez			║
 /// ║ 	@	Ultr.					║
+/// ║ 	@	LuxAlgo					║
 /// ╚═══════════════════════════════╝
 
 //@version=5
-indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC", overlay = true)
+indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC", overlay = true, max_boxes_count = 500)
 
 //// ─────────────────────────────────────────────────────────────────────
 
@@ -115,7 +119,7 @@ indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo &
 	// GraySgray70								= #696666								// GrayScalegray70
 	// GraySgrayDark							= #c1c1c1								// GrayScalegrayDark
 	// GraySwebSeasalt		    				= #fafafc								// GrayScalewebSeasalt
-	// GraySwebDivider							= #e9e7f1								// GrayScalewebDivider
+GraySwebDivider							= #e9e7f1								// GrayScalewebDivider
 	// GraySwebBackground						= #f3f2fa								// GrayScalewebBackground
 	// GraySwebSecondaryText					= #77708a								// GrayScalewebSecondaryText
 	// GraySwebStroke							= #d3ceeb								// GrayScalewebStroke
@@ -211,7 +215,7 @@ ARoPrimary								= #0035FF								// ArbePrimary
 /// ─── Bright Line ───
 BrLiYel10								= #FBFD73								// BrightLine Yellow Light
 	// BrLiYel20								= #FFFD52								// BrightLine Yellow Light
-	// BrLiYel30								= #FDF43C								// BrightLineB Yellow High
+BrLiYel30								= #FDF43C								// BrightLineB Yellow High
 BrLiYel40								= #FEF301								// BrightLineBackground Yellow Nit
 	// BrLiYel50								= #FFDB00								// BrightLineBackground Yellow Base
 
@@ -341,5 +345,133 @@ if fvgDetectDown
 	  box.new(bar_index[2],  low[2], bar_index, high
 	  , border_color	= colFvgPosShort
 	  , bgcolor			= colFvgPosShort))
+
+//// ─────────────────────────────────────────────────────────────────────
+//// ─────────────────────────────────────────────────────────────────────
+//// ─────────────────────────────────────────────────────────────────────
+
+/// ╔═══════════════════════════════╗
+/// ║ 	Liquidity Void Fvg			║
+/// ║ 	Vacios de liquidez			║
+/// ║ 	@	Ultr.					║
+/// ╚═══════════════════════════════╝
+
+//// ─────────────────────────────────────────────────────────────────────
+
+groupLiquidFvg		= "Detección de Liquidez (Fvg Void)"
+
+vLiquidBC			= input.color		(color.new(BrLiYel30, 86),			title = 'Compra',				inline = 'vColor',			group = groupLiquidFvg)
+vLiquidSC			= input.color		(color.new(BrLiYel10, 90),			title = 'Venta',				inline = 'vColor',			group = groupLiquidFvg)
+vLiquidFC			= input.color		(color.new(BrLiYel10, 90),			title = 'Neutral',				inline = 'vtColor',			group = groupLiquidFvg)
+vLiquidFont			= input.color		(color.new(GraySwebDivider, 80),	title = 'Fuente',				inline = 'vtColor',			group = groupLiquidFvg)
+
+//// ───────────────────────
+/// ─── Fvg Void ────
+/// ─── Variables ───
+//// ───────────────────────
+tLiquidmdTT			= 'La opción modalidad controla el número de objetos visuales presentados, donde\n\n- Histórico, tiene en cuenta todos los datos disponibles para el usuarion\n- Presente, tiene en cuenta solo las últimas X barras especificadas en la opción de \'# Barras \' '
+vLiquidTT			= 'Actúa como filtro mientras detectas los vacíos de liquidez. Cuando se establece en 0 significa que no se aplica ningún filtrado, al aumentar el valor se hace que el script compruebe el ancho del vacío en comparación con un valor de ATR de longitud fija'
+vLiquidFT			= 'Alterna la visibilidad de los vacíos de liquidez cubiertos'
+
+vLiquidVisual		= input.bool		(defval = true,					title = 'Visualizar FVG',					group = groupLiquidFvg)
+
+vLiquidVF			= input.bool		(defval = true,					title = 'Vacíos de liquidez cubiertos',		tooltip = vLiquidFT,			group = groupLiquidFvg)
+vLiquidTX			= input.bool		(defval = false,				title = 'Etiquetas',						group = groupLiquidFvg)
+optModalidad		= input.string		(defval = 'Historico',			title = 'Modalidad',						options =['Actual', 'Historico'],			group = groupLiquidFvg)
+vLiquidBack			= input.int			(defval = 360,					title = ' # Barras',						tooltip = tLiquidmdTT,		minval = 100,	maxval = 5000,	step = 10,			group = groupLiquidFvg)
+vLiquidTH			= input.float		(defval = 0.5,					title = 'Umbral',							tooltip = vLiquidTT,		minval = 0, 	maxval = 50,	step = .1,			group = groupLiquidFvg)
+
+//// ───────────────────────
+/// ─── Fvg Void ────
+/// ─── Types ───────
+//// ───────────────────────
+
+// @type		Las propiedades de la barra con sus valores 
+
+// @field h		(float)	precio alto de la barra
+// @field l		(float)	precio bajo de la barra
+// @field c		(float)	precio de cierre de la barra
+// @field o		(float)	precio de apertura de la barra
+// @field i		(int)	índice de la barra
+
+type HLOCIBAR
+	float h = high
+	float l = low
+	float o = open
+	float c = close
+	int   i = bar_index
+
+//// ───────────────────────
+/// ─── Fvg Void ────
+/// ─── Instancias ──
+//// ───────────────────────
+
+HLOCIBAR insBvoid = HLOCIBAR.new()
+
+var vLiquidV = array.new_box()
+
+//// ───────────────────────
+/// ─── Fvg Void ────
+/// ─── Math ────────
+//// ───────────────────────
+
+vLiquidPer	= optModalidad == 'Actual' ? last_bar_index - insBvoid.i <= vLiquidBack : true
+vLiquidAtr	= ta.atr(144) * vLiquidTH
+
+if vLiquidVisual and vLiquidPer
+	fLiquidUp = (insBvoid.l - insBvoid.h[2]) > vLiquidAtr and insBvoid.l > insBvoid.h[2] and insBvoid.c[1] > insBvoid.h[2]
+
+	if fLiquidUp 
+		l = 13
+		if fLiquidUp[1] 
+			st = math.abs(insBvoid.l - insBvoid.l[1]) / l
+			for i = 0 to l - 1
+				array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.l[1] + (i + 1) * st, insBvoid.i, insBvoid.l[1] + i * st, na, bgcolor = vLiquidBC ))
+		else   
+			st = math.abs(insBvoid.l - insBvoid.h[2]) / l
+			for i = 0 to l - 1
+				if vLiquidTX and i == 0
+					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h[2] + (i + 1) * st, insBvoid.i, insBvoid.h[2] + i * st, na, text = 'Fvg  ', text_size = size.tiny, text_halign = text.align_right, text_valign = text.align_bottom, text_color = vLiquidFont, bgcolor = vLiquidBC ))
+				else
+					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h[2] + (i + 1) * st, insBvoid.i, insBvoid.h[2] + i * st, na, bgcolor = vLiquidBC ))
+
+	fLiquidDown = (insBvoid.l[2] - insBvoid.h) > vLiquidAtr and insBvoid.h < insBvoid.l[2] and insBvoid.c[1] < insBvoid.l[2]
+
+	if fLiquidDown
+		l = 13
+		if fLiquidDown[1]
+			st = math.abs(insBvoid.h[1] - insBvoid.h) / l
+			for i = 0 to l - 1
+				array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h + (i + 1) * st, insBvoid.i, insBvoid.h + i * st, na, bgcolor = vLiquidSC ))
+		else
+			st = math.abs(insBvoid.l[2] - insBvoid.h) / l
+			for i = 0 to l - 1
+				if vLiquidTX and i == l - 1
+					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h + (i + 1) * st, insBvoid.i, insBvoid.h + i * st, na, text = 'Fvg  ', text_size = size.tiny, text_halign = text.align_right, text_valign = text.align_top, text_color = vLiquidFont, bgcolor = vLiquidSC ))
+				else
+					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h + (i + 1) * st, insBvoid.i, insBvoid.h + i * st, na, bgcolor = vLiquidSC ))
+
+if vLiquidVisual and vLiquidV.size() > 0
+	vLiquidFuQT = vLiquidV.size()
+
+	for vLiqVIfbn = vLiquidFuQT - 1 to 0
+		if vLiqVIfbn < vLiquidV.size()
+			vLiqVFuCB = vLiquidV.get(vLiqVIfbn)
+			vLiqVFutBX = vLiqVFuCB.get_top()
+			vLiqVFubBX = vLiqVFuCB.get_bottom()
+			if insBvoid.h > vLiqVFubBX and insBvoid.l < vLiqVFutBX
+				if vLiquidVF
+					vLiqVFuCB.set_bgcolor(vLiquidFC)
+				else
+					vLiqVFuCB.delete()
+				vLiquidV.remove(vLiqVIfbn)
+			else
+				vLiqVFuCB.set_right(insBvoid.i + 1)
+
+				if insBvoid.i - vLiqVFuCB.get_left() > 21
+					vLiqVFuCB.set_text_color(chart.fg_color)
+
+	if vLiquidV.size() > 500
+		vLiquidV.shift()
 
 //// ─────────────────────────────────────────────────────────────────────
