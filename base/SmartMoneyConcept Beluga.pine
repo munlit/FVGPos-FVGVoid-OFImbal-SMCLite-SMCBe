@@ -1,7 +1,6 @@
 /// ╔═══════════════════════════════╗
 /// ║ 	Smart Money Concept			║
-/// ║ 	Vacios de liquidez			║
-/// ║ 	@	Ultr.					║
+/// ║ 	@	Allen.					║
 /// ║ 	@	BigBeluga				║
 /// ╚═══════════════════════════════╝
 
@@ -306,7 +305,7 @@ AllenFucsia50							= #EA1889
 /// ─── Const ──
 //// ───────────────────────
 
-MSGGroup					= "ESTRUCTURA DEL MERCADO"
+MSGGroup					= "Smart Money Concept Belu - ESTRUCTURA DEL MERCADO"
 VBGGroup					= "ORDER BLOCKS VOLUMÉTRICO"
 VFvgGroup					= "FAIR VALUE GAP"
 VSwingGroup					= "PATRÓN de QUIEBRE de SWING"
