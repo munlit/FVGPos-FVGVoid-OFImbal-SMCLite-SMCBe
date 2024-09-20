@@ -1,5 +1,5 @@
 /// ╔═══════════════════════════════╗
-/// ║ 	Sessions & Killzones		║
+/// ║ 	OrderFlow Imbalance			║
 /// ║ 	@	Ultr.					║
 /// ║ 	©	turk_shariq				║
 /// ╚═══════════════════════════════╝
@@ -307,7 +307,7 @@ ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray) =>
 			ofImFuboxlowzone		= box.get_bottom(ofImFucutbox)
 			ofImFuboxrightzone		= box.get_right(ofImFucutbox)
 			if na or bar_index - 1 == ofImFuboxrightzone and not(high > ofImFuboxlowzone and low < ofImFuboxlowzone or high > ofImFuboxhighzone and low < ofImFuboxhighzone)
-				box.set_right(array.get(ofImbArrimbboxarray, i), bar_index)
+				box.set_right(array.get(ofImbArrofImFuimbboxarray, i), bar_index)
 
 //// ───────────────────────
 /// ─── Imbalance ──

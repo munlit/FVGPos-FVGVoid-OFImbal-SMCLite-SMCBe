@@ -3,12 +3,15 @@
 /// ╔═══════════════════════════════╗
 /// ║ 	Liquidity Void Fvg			║
 /// ║ 	Vacios de liquidez			║
-/// ║ 	@	Ultr.					║
-/// ║ 	@	LuxAlgo					║
+/// ╔═══════════════════════════════╗
+/// ║ 	Sessions & Killzones		║
+/// ║ 	@	Allen.					║
+/// ║ 	©	turk_shariq				║
 /// ╚═══════════════════════════════╝
 
+//// ─────────────────────────────────────────────────────────────────────
 //@version=5
-indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC", overlay = true, max_boxes_count = 500)
+indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC", overlay = true, max_boxes_count = 500, max_lines_count = 500)
 
 //// ─────────────────────────────────────────────────────────────────────
 
@@ -473,5 +476,68 @@ if vLiquidVisual and vLiquidV.size() > 0
 
 	if vLiquidV.size() > 500
 		vLiquidV.shift()
+
+//// ─────────────────────────────────────────────────────────────────────
+//// ─────────────────────────────────────────────────────────────────────
+//// ─────────────────────────────────────────────────────────────────────
+
+/// ╔═══════════════════════════════╗
+/// ║ 	OrderFlow Imbalance			║
+/// ║ 	@	Allen.					║
+/// ║ 	©	turk_shariq				║
+/// ╚═══════════════════════════════╝
+
+//// ─────────────────────────────────────────────────────────────────────
+
+//// ───────────────────────
+/// ─── Imbalance ──
+/// ─── Variables ──
+//// ───────────────────────
+
+var ofImbgrpImbalance				= " Visualización OrderFlow Imbalance"
+ofImbVaradboxcountimbalance			= input.int		(defval = 50,				title = "Rango de Visualización",	inline = "imbgl",		group = ofImbgrpImbalance)
+ofImbVarboxcolorimbalance			= input.color	(color.new(BrLiYel10, 80),	title = "Color de Imbalance",		inline = "imbgl",		group = ofImbgrpImbalance)
+
+//// ───────────────────────
+/// ─── Imbalance ──
+/// ─── Box Variables
+//// ───────────────────────
+
+var box[] ofImbArrofImFuimbboxarray		= array.new_box()
+
+ofImbVartopimbalance				= low[2] <= open[1] and high[0] >= close[1]
+ofImbVartopimbalancesize			= low[2] - high[0]
+ofImbVarbottomimbalance				= high[2] >= open[1] and low[0] <= close[1]
+ofImbVarbottomimbalancesize			= low[0] - high[2]
+
+//// ───────────────────────
+/// ─── Imbalance ──
+/// ─── Box Math ───
+//// ───────────────────────
+
+ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray) =>
+	if array.size(ofImbArrofImFuimbboxarray) > 0
+		for i = array.size(ofImbArrofImFuimbboxarray) - 1 to 0 by 1
+			ofImFucutbox			= array.get(ofImbArrofImFuimbboxarray, i)
+			ofImFuboxhighzone		= box.get_top(ofImFucutbox)
+			ofImFuboxlowzone		= box.get_bottom(ofImFucutbox)
+			ofImFuboxrightzone		= box.get_right(ofImFucutbox)
+			if na or bar_index - 1 == ofImFuboxrightzone and not(high > ofImFuboxlowzone and low < ofImFuboxlowzone or high > ofImFuboxhighzone and low < ofImFuboxhighzone)
+				box.set_right(array.get(ofImbArrofImFuimbboxarray, i), bar_index)
+
+//// ───────────────────────
+/// ─── Imbalance ──
+/// ─── Box Draw ───
+//// ───────────────────────
+
+if ofImbVartopimbalance and ofImbVartopimbalancesize > 0 or ofImbVarbottomimbalance and ofImbVarbottomimbalancesize > 0
+	ofImFuboxhighzone				= ofImbVartopimbalance and ofImbVartopimbalancesize > 0 ? low[2] : low[0]
+	ofImFuboxlowzone				= ofImbVartopimbalance and ofImbVartopimbalancesize > 0 ? high[0] : high[2]
+	ofImFuimbbox					= box.new(bar_index, ofImFuboxhighzone, bar_index, ofImFuboxlowzone, ofImbVarboxcolorimbalance, border_style = line.style_dashed, bgcolor = ofImbVarboxcolorimbalance)
+	if array.size(ofImbArrofImFuimbboxarray) > ofImbVaradboxcountimbalance
+		box.delete(array.shift(ofImbArrofImFuimbboxarray))
+	array.push(ofImbArrofImFuimbboxarray, ofImFuimbbox)
+
+ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray)
 
 //// ─────────────────────────────────────────────────────────────────────
