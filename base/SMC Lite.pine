@@ -400,21 +400,20 @@ smcLiVarFunctionSupplyDemand(value_array, bn_array, smLiFuBoxArray, smLiFuLabelA
 	if smLiFuBoxType == 1 and smLiFuOkayToDraw
 		box.delete( array.get(smLiFuBoxArray, array.size(smLiFuBoxArray) - 1) )
 		smcLiVarFunctionArrayAddPop(smLiFuBoxArray, box.new( left = smLiFuBoxLeft, top = smLiFuBoxTop, right = smLiFuBoxRight, bottom = smLiFuBoxBottom, border_color = smcLiColorSupplyOutline,
-			 bgcolor = smcLiColorSupply, extend = extend.right, text = 'OFERTA', text_halign = text.align_center, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+			 bgcolor = smcLiColorSupply, extend = extend.right, text = 'SUPPLY', text_halign = text.align_center, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
 		
 		box.delete( array.get(smLiFuLabelArray, array.size(smLiFuLabelArray) - 1) )
 		smcLiVarFunctionArrayAddPop(smLiFuLabelArray, box.new( left = smLiFuBoxLeft, top = smLiFuPOI, right = smLiFuBoxRight, bottom = smLiFuPOI, border_color = color.new(smcLiColorPOILabel,90),
-			 bgcolor = color.new(smcLiColorPOILabel,80), extend = extend.right, text = 'Punto de Interes', text_halign = text.align_left, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+			 bgcolor = color.new(smcLiColorPOILabel,80), extend = extend.right, text = 'POI', text_halign = text.align_left, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
 
 	else if smLiFuBoxType == -1 and smLiFuOkayToDraw
 		box.delete( array.get(smLiFuBoxArray, array.size(smLiFuBoxArray) - 1) )
 		smcLiVarFunctionArrayAddPop(smLiFuBoxArray, box.new( left = smLiFuBoxLeft, top = smLiFuBoxTop, right = smLiFuBoxRight, bottom = smLiFuBoxBottom, border_color = smcLiColorDemandOutline,
-			 bgcolor = smcLiColorDemand, extend = extend.right,  text = 'DEMANDA', text_halign = text.align_center, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+			 bgcolor = smcLiColorDemand, extend = extend.right,  text = 'DEMAND', text_halign = text.align_center, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
 		
 		box.delete( array.get(smLiFuLabelArray, array.size(smLiFuLabelArray) - 1) )
 		smcLiVarFunctionArrayAddPop(smLiFuLabelArray, box.new( left = smLiFuBoxLeft, top = smLiFuPOI, right = smLiFuBoxRight, bottom = smLiFuPOI, border_color = color.new(smcLiColorPOILabel,90),
-			 bgcolor = color.new(smcLiColorPOILabel,80), extend = extend.right,  text = 'Punto de Interes', text_halign = text.align_left, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
-
+			 bgcolor = color.new(smcLiColorPOILabel,80), extend = extend.right,  text = 'POI', text_halign = text.align_left, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
 
 /// ─── Function to change supply/demand to a bos if broken
 smcLiVarFunctionSdToBos(smLiFuBoxArray, smLiFuBOSArray, smLiFuLabelArray, smLiFuZoneType) =>

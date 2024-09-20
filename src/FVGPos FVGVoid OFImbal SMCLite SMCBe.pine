@@ -4,14 +4,15 @@
 /// ║ 	Liquidity Void Fvg			║
 /// ║ 	Vacios de liquidez			║
 /// ╔═══════════════════════════════╗
-/// ║ 	Sessions & Killzones		║
-/// ║ 	@	Allen.					║
-/// ║ 	©	turk_shariq				║
+/// ║ 	OrderFlow Imbalance			║
+/// ╔═══════════════════════════════╗
+/// ║	SMC Lite					║
+/// ║	@	Allen.					║
+/// ║	©	Pmgjiv FluidTrades		║
 /// ╚═══════════════════════════════╝
 
-//// ─────────────────────────────────────────────────────────────────────
 //@version=5
-indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC", overlay = true, max_boxes_count = 500, max_lines_count = 500)
+indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC", overlay = true, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500, max_bars_back = 1000)
 
 //// ─────────────────────────────────────────────────────────────────────
 
@@ -41,7 +42,7 @@ indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo &
 /// ─── Ameritrade ───
 	// AmeTrWhite								= #FFFFFF								// AmeritradeWhite
 	// AmeTrGrayPlatinum						= #F7F7F7								// AmeritradeGrayPlatinum
-	// AmeTrGrayNickel							= #F1F1F1								// AmeritradeGrayNickel
+AmeTrGrayNickel							= #F1F1F1								// AmeritradeGrayNickel
 	// AmeTrGrayNickelDark20					= #C0C0C0								// AmeritradeGrayNickelDark20
 	// AmeTrGrayAluminum						= #E6E7E9								// AmeritradeGrayAluminum
 	// AmeTrGrayAsh								= #D8D8D8								// AmeritradeGrayAsh
@@ -232,13 +233,13 @@ BrLiYel40								= #FEF301								// BrightLineBackground Yellow Nit
 /// ─── Victoria Secret ───
 	// VictSecPink20							= #EDB3DD								// VictSecPink20
 	// VictSecPink50							= #E651CD								// VictSecPink50
-	// VictSecFucsia50							= #EA1889								// VictSecFucsia50
+VictSecFucsia50							= #EA1889								// VictSecFucsia50
 	// VictSecWine30							= #C2329F								// VictSecWine30
 	// VictSecWine50							= #7D1250								// VictSecWine50
 	// VictSecWine60							= #7C2558								// VictSecWine60
 
 /// ─── Mongo DB ───
-	// MongoSky10								= #E3FCF7								// MongoDBSky10
+MongoSky10								= #E3FCF7								// MongoDBSky10
 	// MongoYellow50							= #FFE212								// MongoDBYellow50
 	// MongoLime50								= #B1FF05								// MongoDBLime50
 	// MongoGreen50								= #00ED64								// MongoDBGreen50
@@ -539,5 +540,309 @@ if ofImbVartopimbalance and ofImbVartopimbalancesize > 0 or ofImbVarbottomimbala
 	array.push(ofImbArrofImFuimbboxarray, ofImFuimbbox)
 
 ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray)
+
+//// ─────────────────────────────────────────────────────────────────────
+//// ─────────────────────────────────────────────────────────────────────
+//// ─────────────────────────────────────────────────────────────────────
+
+/// ╔═══════════════════════════════╗
+/// ║	SMC Lite					║
+/// ║	@	Allen.					║
+/// ║	©	Pmgjiv FluidTrades		║
+/// ╚═══════════════════════════════╝
+
+//// ─────────────────────────────────────────────────────────────────────
+
+//// ───────────────────────
+/// ─── SMC lite ───
+/// ─── Variables ──
+//// ───────────────────────
+
+smcLiGroupSett					= 'Configuración SMC Lite'
+smcLiGroupShow					= 'Visualización SMC Lite'
+
+/// ─── Visualización
+smcLiVarShowZigzag				= input.bool	(false,								title = 'Mostrar Zig Zag',					group = smcLiGroupShow,			inline = '1')
+smcLiVarShowPriceActionLabels	= input.bool	(false,								title = 'Mostrar Acción de Precio',			group = smcLiGroupShow,			inline = '2')
+
+smcLiColorZigZag				= input.color	(color.new(BrLiYel40, 40),			title = '                 Linea  ',			group = smcLiGroupShow,			inline = '1')
+smcLiColorSwingType				= input.color	(PlatziBlue50,						title = '    Texto ',						group = smcLiGroupShow,			inline = '2')
+
+smcLiColorSupply				= input.color	(color.new(AllenSky10, 70),			title = '    Oferta     ',					group = smcLiGroupShow,			inline = '3')
+smcLiColorSupplyOutline			= input.color	(color.new(AllenSky10, 90),			title = '   Contorno ',						group = smcLiGroupShow,			inline = '3')
+
+smcLiColorDemand				= input.color	(color.new(AllenMint60, 70),		title = '    Demanda ',						group = smcLiGroupShow,			inline = '4')
+smcLiColorDemandOutline			= input.color	(color.new(AllenMint60, 90),		title = '   Contorno ',						group = smcLiGroupShow,			inline = '4')
+
+// smcLiColorBOSLongLine			= input.color	(color.new(AllenSky10, 30),			title = ' Bos Compra',						group = smcLiGroupShow,			inline = '5')
+// smcLiColorBOSShortLine			= input.color	(color.new(AllenMint60, 30),		title = ' Bos Venta ',						group = smcLiGroupShow,			inline = '5')
+
+smcLiColorBOSLabel				= input.color	(color.new(MongoSky10, 100),		title = ' BOS Texto  ',						group = smcLiGroupShow,			inline = '6')
+smcLiColorPOILabel				= input.color	(color.new(MongoSky10, 20),			title = '   POI Texto ',					group = smcLiGroupShow,			inline = '6')
+
+/// ─── Configuración
+smcLiVarSwingLength				= input.int		(10,								title = 'Longitud de Oscilación High/Low',	group = smcLiGroupSett,			minval = 1,	maxval = 50)
+smcLiVarHistoryDemandKeep		= input.int		(20,								title = 'Historico',						group = smcLiGroupSett,			minval = 5,	maxval = 50)
+smcLiVarBoxWidth				= input.float	(2.5,								title = 'Box de oferta y demanda',			group = smcLiGroupSett,			minval = 1,	maxval = 10,	step = 0.5)
+
+//// ───────────────────────
+/// ─── SMC lite ───
+/// ─── Functions ──
+//// ───────────────────────
+
+/// ─── Function to add new and remove last in array
+smcLiVarFunctionArrayAddPop(array, smLiFuNewValueAdd) =>
+	array.unshift(array, smLiFuNewValueAdd)
+	array.pop(array)
+
+/// ─── Function swing h & l labels
+smcLiVarFunctionShSlLabels(array, smLiFuSwingType) =>
+
+	var string smLiFuLabelText = na
+	if smLiFuSwingType == 1
+		if array.get(array, 0) >= array.get(array, 1)
+			smLiFuLabelText := 'HH'
+		else
+			smLiFuLabelText := 'LH'
+		label.new(bar_index - smcLiVarSwingLength, array.get(array,0), text = smLiFuLabelText, style=label.style_label_down, textcolor = smcLiColorSwingType, color = color.new(smcLiColorSwingType, 100), size = size.tiny)
+	
+	else if smLiFuSwingType == -1
+		if array.get(array, 0) >= array.get(array, 1)
+			smLiFuLabelText := 'HL'
+		else
+			smLiFuLabelText := 'LL'
+		label.new(bar_index - smcLiVarSwingLength, array.get(array,0), text = smLiFuLabelText, style=label.style_label_up, textcolor = smcLiColorSwingType, color = color.new(smcLiColorSwingType, 100), size = size.tiny)
+
+/// ─── Function make sure supply isnt overlapping
+smcLiVarFunctionCheckOverlapping(smLiFuNewPOI, smLiFuBoxArray, smLiFuATR) =>
+
+	smLiFuATRThreshold			= smLiFuATR * 2
+	smLiFuOkayToDraw			= true
+
+	for i = 0 to array.size(smLiFuBoxArray) - 1
+		top				= box.get_top(array.get(smLiFuBoxArray, i))
+		bottom			= box.get_bottom(array.get(smLiFuBoxArray, i))
+		smLiFuPOI				= (top + bottom) / 2
+
+		smLiFuUpperBoundary		= smLiFuPOI + smLiFuATRThreshold
+		smLiFuLowerBoundary		= smLiFuPOI - smLiFuATRThreshold
+
+		if smLiFuNewPOI >= smLiFuLowerBoundary and smLiFuNewPOI <= smLiFuUpperBoundary
+			smLiFuOkayToDraw	:= false
+			break
+		else 
+			smLiFuOkayToDraw 	:= true
+	smLiFuOkayToDraw
+
+/// ─── Function to draw supply or demand zone
+smcLiVarFunctionSupplyDemand(value_array, bn_array, smLiFuBoxArray, smLiFuLabelArray, smLiFuBoxType, smLiFuATR) =>
+
+	smLiFuATRBbuffer	= smLiFuATR * (smcLiVarBoxWidth / 10)
+	smLiFuBoxLeft		= array.get(bn_array, 0)
+	smLiFuBoxRight		= bar_index
+
+	var float smLiFuBoxTop		= 0.00
+	var float smLiFuBoxBottom	= 0.00
+	var float smLiFuPOI			= 0.00
+
+	if smLiFuBoxType == 1
+		smLiFuBoxTop := array.get(value_array, 0)
+		smLiFuBoxBottom := smLiFuBoxTop - smLiFuATRBbuffer
+		smLiFuPOI := (smLiFuBoxTop + smLiFuBoxBottom) / 2
+	else if smLiFuBoxType == -1
+		smLiFuBoxBottom := array.get(value_array, 0)
+		smLiFuBoxTop := smLiFuBoxBottom + smLiFuATRBbuffer
+		smLiFuPOI := (smLiFuBoxTop + smLiFuBoxBottom) / 2
+
+	smLiFuOkayToDraw = smcLiVarFunctionCheckOverlapping(smLiFuPOI, smLiFuBoxArray, smLiFuATR)
+	/// smLiFuOkayToDraw = true
+
+	/// delete oldest box, and then create a new box and add it to the array
+	if smLiFuBoxType == 1 and smLiFuOkayToDraw
+		box.delete( array.get(smLiFuBoxArray, array.size(smLiFuBoxArray) - 1) )
+		smcLiVarFunctionArrayAddPop(smLiFuBoxArray, box.new( left = smLiFuBoxLeft, top = smLiFuBoxTop, right = smLiFuBoxRight, bottom = smLiFuBoxBottom, border_color = smcLiColorSupplyOutline,
+			 bgcolor = smcLiColorSupply, extend = extend.right, text = 'SUPPLY', text_halign = text.align_center, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+		
+		box.delete( array.get(smLiFuLabelArray, array.size(smLiFuLabelArray) - 1) )
+		smcLiVarFunctionArrayAddPop(smLiFuLabelArray, box.new( left = smLiFuBoxLeft, top = smLiFuPOI, right = smLiFuBoxRight, bottom = smLiFuPOI, border_color = color.new(smcLiColorPOILabel,90),
+			 bgcolor = color.new(smcLiColorPOILabel,80), extend = extend.right, text = 'POI', text_halign = text.align_left, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+
+	else if smLiFuBoxType == -1 and smLiFuOkayToDraw
+		box.delete( array.get(smLiFuBoxArray, array.size(smLiFuBoxArray) - 1) )
+		smcLiVarFunctionArrayAddPop(smLiFuBoxArray, box.new( left = smLiFuBoxLeft, top = smLiFuBoxTop, right = smLiFuBoxRight, bottom = smLiFuBoxBottom, border_color = smcLiColorDemandOutline,
+			 bgcolor = smcLiColorDemand, extend = extend.right,  text = 'DEMAND', text_halign = text.align_center, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+		
+		box.delete( array.get(smLiFuLabelArray, array.size(smLiFuLabelArray) - 1) )
+		smcLiVarFunctionArrayAddPop(smLiFuLabelArray, box.new( left = smLiFuBoxLeft, top = smLiFuPOI, right = smLiFuBoxRight, bottom = smLiFuPOI, border_color = color.new(smcLiColorPOILabel,90),
+			 bgcolor = color.new(smcLiColorPOILabel,80), extend = extend.right,  text = 'POI', text_halign = text.align_left, text_valign = text.align_center, text_color = smcLiColorPOILabel, text_size = size.small, xloc = xloc.bar_index))
+
+
+/// ─── Function to change supply/demand to a bos if broken
+smcLiVarFunctionSdToBos(smLiFuBoxArray, smLiFuBOSArray, smLiFuLabelArray, smLiFuZoneType) =>
+
+	if smLiFuZoneType == 1
+		for i = 0 to array.size(smLiFuBoxArray) - 1
+			smLiFuLevelToBreak = box.get_top(array.get(smLiFuBoxArray,i))
+
+			/// if ta.crossover(close, smLiFuLevelToBreak)
+			if close >= smLiFuLevelToBreak
+				smLiFuCopiedBox = box.copy(array.get(smLiFuBoxArray,i))
+				smcLiVarFunctionArrayAddPop(smLiFuBOSArray, smLiFuCopiedBox)
+				smLiFuMID = (box.get_top(array.get(smLiFuBoxArray,i)) + box.get_bottom(array.get(smLiFuBoxArray,i))) / 2
+				box.set_top(array.get(smLiFuBOSArray,0), smLiFuMID)
+				box.set_bottom(array.get(smLiFuBOSArray,0), smLiFuMID)
+				box.set_extend( array.get(smLiFuBOSArray,0), extend.none)
+				box.set_right( array.get(smLiFuBOSArray,0), bar_index)
+				box.set_text( array.get(smLiFuBOSArray,0), 'Bos' )
+				box.set_text_color( array.get(smLiFuBOSArray,0), smcLiColorBOSLabel)
+				box.set_text_size( array.get(smLiFuBOSArray,0), size.small)
+				box.set_text_halign( array.get(smLiFuBOSArray,0), text.align_center)
+				box.set_text_valign( array.get(smLiFuBOSArray,0), text.align_center)
+				box.delete(array.get(smLiFuBoxArray, i))
+				box.delete(array.get(smLiFuLabelArray, i))
+
+	if smLiFuZoneType == -1
+		for i = 0 to array.size(smLiFuBoxArray) - 1
+			smLiFuLevelToBreak = box.get_bottom(array.get(smLiFuBoxArray,i))
+			/// if ta.crossunder(close, smLiFuLevelToBreak)
+			if close <= smLiFuLevelToBreak
+				smLiFuCopiedBox = box.copy(array.get(smLiFuBoxArray,i))
+				smcLiVarFunctionArrayAddPop(smLiFuBOSArray, smLiFuCopiedBox)
+				smLiFuMID = (box.get_top(array.get(smLiFuBoxArray,i)) + box.get_bottom(array.get(smLiFuBoxArray,i))) / 2
+				box.set_top(array.get(smLiFuBOSArray,0), smLiFuMID)
+				box.set_bottom(array.get(smLiFuBOSArray,0), smLiFuMID)
+				box.set_extend( array.get(smLiFuBOSArray,0), extend.none)
+				box.set_right( array.get(smLiFuBOSArray,0), bar_index)
+				box.set_text( array.get(smLiFuBOSArray,0), 'Bos' )
+				box.set_text_color( array.get(smLiFuBOSArray,0), smcLiColorBOSLabel)
+				box.set_text_size( array.get(smLiFuBOSArray,0), size.small)
+				box.set_text_halign( array.get(smLiFuBOSArray,0), text.align_center)
+				box.set_text_valign( array.get(smLiFuBOSArray,0), text.align_center)
+				box.delete(array.get(smLiFuBoxArray, i))
+				box.delete(array.get(smLiFuLabelArray, i))
+
+/// ─── Function manage current boxes by changing endpoint
+smcLiVarFunctionExtendBoxEndpoint(smLiFuBoxArray) =>
+
+	for i = 0 to array.size(smLiFuBoxArray) - 1
+		box.set_right(array.get(smLiFuBoxArray, i), bar_index + 100)
+
+//// ───────────────────────
+/// ─── SMC lite ───
+/// ─── Math ──
+//// ───────────────────────
+
+/// ─── Calculate atr 
+smLiFuATR						= ta.atr(50)
+
+/// ─── Calculate swing highs & swing lows
+smLiVarSwingHigh				= ta.pivothigh(high, smcLiVarSwingLength, smcLiVarSwingLength)
+smcLiVarSwingLow				= ta.pivotlow(low, smcLiVarSwingLength, smcLiVarSwingLength)
+
+/// ─── Arrays for swing h/l & bn 
+var smcLiVarSwingHighValues 	= array.new_float(5,0.00)
+var smcLiVarSwingLowValues		= array.new_float(5,0.00)
+
+var smcLiVarSwingHighBns		= array.new_int(5,0)
+var smcLiVarSwingLowBns			= array.new_int(5,0)
+
+/// ─── Arrays for supply / demand
+var smcLiVarCurrentSupplyBox	= array.new_box(smcLiVarHistoryDemandKeep, na)
+var smcLiVarCurrentDemandBox	= array.new_box(smcLiVarHistoryDemandKeep, na)
+
+/// ─── Arrays for supply / demand poi labels
+var smcLiVarCurrentSupplyPOI	= array.new_box(smcLiVarHistoryDemandKeep, na)
+var smcLiVarCurrentDemandPOI	= array.new_box(smcLiVarHistoryDemandKeep, na)
+
+/// ─── Arrays for bos
+var smcLiVarSupplyBOS			= array.new_box(5, na)
+var smcLiVarDemandBOS			= array.new_box(5, na)
+
+//// ───────────────────────
+/// ─── SMC lite ───
+/// ─── Swing ──────
+//// ───────────────────────
+
+/// ─── New swing high
+if not na(smLiVarSwingHigh)
+
+	/// Manage swing high values
+	smcLiVarFunctionArrayAddPop(smcLiVarSwingHighValues, smLiVarSwingHigh)
+	smcLiVarFunctionArrayAddPop(smcLiVarSwingHighBns, bar_index[smcLiVarSwingLength])
+	if smcLiVarShowPriceActionLabels
+		smcLiVarFunctionShSlLabels(smcLiVarSwingHighValues, 1)
+
+	smcLiVarFunctionSupplyDemand(smcLiVarSwingHighValues, smcLiVarSwingHighBns, smcLiVarCurrentSupplyBox, smcLiVarCurrentSupplyPOI, 1, smLiFuATR)
+
+/// ─── NEW SWING LOW
+else if not na(smcLiVarSwingLow)
+
+	/// Manage swing low values
+	smcLiVarFunctionArrayAddPop(smcLiVarSwingLowValues, smcLiVarSwingLow)
+	smcLiVarFunctionArrayAddPop(smcLiVarSwingLowBns, bar_index[smcLiVarSwingLength])
+	if smcLiVarShowPriceActionLabels
+		smcLiVarFunctionShSlLabels(smcLiVarSwingLowValues, -1)
+	
+	smcLiVarFunctionSupplyDemand(smcLiVarSwingLowValues, smcLiVarSwingLowBns, smcLiVarCurrentDemandBox, smcLiVarCurrentDemandPOI, -1, smLiFuATR)
+
+
+smcLiVarFunctionSdToBos(smcLiVarCurrentSupplyBox, smcLiVarSupplyBOS, smcLiVarCurrentSupplyPOI, 1)
+smcLiVarFunctionSdToBos(smcLiVarCurrentDemandBox, smcLiVarDemandBOS, smcLiVarCurrentDemandPOI, -1)
+
+smcLiVarFunctionExtendBoxEndpoint(smcLiVarCurrentSupplyBox)
+smcLiVarFunctionExtendBoxEndpoint(smcLiVarCurrentDemandBox)
+
+/// ─── ZIG ZAG
+smcLiVarHighest				= ta.highest(high, smcLiVarSwingLength * 2 + 1)
+smcLiVarLowest				= ta.lowest(low, smcLiVarSwingLength * 2 + 1)
+f_isMin(len) =>
+	smcLiVarLowest == low[len]
+f_isMax(len) =>
+	smcLiVarHighest == high[len]
+
+var smcLiVarDirUp			= false
+var smcLiVarLastLow			= high * 100
+var smcLiVarLastHigh		= 0.0
+var smcLiVarTimeLow			= bar_index
+var smcLiVarTimeHigh		= bar_index
+var line smcLiVarLI			= na
+
+smcLiVarFunctionDrawLine() =>
+	smcLiColorLine = smcLiVarShowZigzag ? smcLiColorZigZag : color.new(#ffffff, 100)
+	line.new(smcLiVarTimeHigh - smcLiVarSwingLength, smcLiVarLastHigh, smcLiVarTimeLow - smcLiVarSwingLength, smcLiVarLastLow, xloc.bar_index, color = smcLiColorLine, width = 2)
+
+if smcLiVarDirUp
+	if f_isMin(smcLiVarSwingLength) and low[smcLiVarSwingLength] < smcLiVarLastLow
+		smcLiVarLastLow := low[smcLiVarSwingLength]
+		smcLiVarTimeLow := bar_index
+		line.delete(smcLiVarLI)
+		smcLiVarLI := smcLiVarFunctionDrawLine()
+		smcLiVarLI
+
+	if f_isMax(smcLiVarSwingLength) and high[smcLiVarSwingLength] > smcLiVarLastLow
+		smcLiVarLastHigh := high[smcLiVarSwingLength]
+		smcLiVarTimeHigh := bar_index
+		smcLiVarDirUp := false
+		smcLiVarLI := smcLiVarFunctionDrawLine()
+		smcLiVarLI
+
+if not smcLiVarDirUp
+	if f_isMax(smcLiVarSwingLength) and high[smcLiVarSwingLength] > smcLiVarLastHigh
+		smcLiVarLastHigh := high[smcLiVarSwingLength]
+		smcLiVarTimeHigh := bar_index
+		line.delete(smcLiVarLI)
+		smcLiVarLI := smcLiVarFunctionDrawLine()
+		smcLiVarLI
+	if f_isMin(smcLiVarSwingLength) and low[smcLiVarSwingLength] < smcLiVarLastHigh
+		smcLiVarLastLow := low[smcLiVarSwingLength]
+		smcLiVarTimeLow := bar_index
+		smcLiVarDirUp := true
+		smcLiVarLI := smcLiVarFunctionDrawLine()
+		if f_isMax(smcLiVarSwingLength) and high[smcLiVarSwingLength] > smcLiVarLastLow
+			smcLiVarLastHigh := high[smcLiVarSwingLength]
+			smcLiVarTimeHigh := bar_index
+			smcLiVarDirUp := false
+			smcLiVarLI := smcLiVarFunctionDrawLine()
+			smcLiVarLI
 
 //// ─────────────────────────────────────────────────────────────────────
