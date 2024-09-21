@@ -295,7 +295,7 @@ AllenMint60								= #33FFAC								// AllenMint60
 
 	// AllenFucsia30							= #E06BAA								// AllenFucsia30
 AllenFucsia50							= #EA1889
-	// AllenWine50								= #E91E63								// AllenWine50
+AllenWine50								= #E91E63								// AllenWine50
 	// AllenWine60								= #E8114B								// AllenWine60
 
 //// ─────────────────────────────────────────────────────────────────────
@@ -329,8 +329,9 @@ DevCssTool					= "Mostrar proyección de desviación SFP"
 
 SmcColorInUp				= AllenMint60
 SmcColorInDn				= AllenSky10
-SmcColorLiUp				= PlatziGreen30
-SmcColorLiDn				= AllenFucsia50
+SmcColorLiUp				= ARoPrimary
+SmcColorLiDn				= AllenWine50
+
 SmcColorBreakUp				= AllenFucsia50
 SmcColorBreakDn				= ARoPrimary
 
@@ -447,8 +448,8 @@ printdowncs					= input.color	(color.new(SmcColorBlue,50),	title = "",									i
 showside					= input.bool	(true,							title = "Buyside & Sellside", 				inline = "side",	group = VLiqCoGroup)
 sidemode					= input.string	("Area",						title = "",									inline = "side",	group = VLiqCoGroup,
 	  options				= ["Area", "Line"])
-buysidecss					= input.color	(color.new(SmcColorLiUp, 20),	title = "",									inline = "side",	group = VLiqCoGroup)
-sidesidecss					= input.color	(color.new(SmcColorLiDn, 20),	title = "",									inline = "side",	group = VLiqCoGroup)
+buysidecss					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
+sidesidecss					= input.color	(color.new(SmcColorLiDn, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
 showzone					= input.bool	(true, "Sweep Area",			title = "Mostrar zona de liquidación Sweep",inline = "sz",		group = VLiqCoGroup)
 zonethresh					= input.int		(10,							title = "",									inline = "sz",		group = VLiqCoGroup,	minval = 2)
 upzone						= input.color	(color.new(SmcColorInUp, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
