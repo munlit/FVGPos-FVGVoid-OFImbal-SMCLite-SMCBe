@@ -327,133 +327,134 @@ FvgSrcTool					= "[Cerrar] Usar el cierre del cuerpo como disparador\n\n[Mecha] 
 OBMitiTool					= "Método de mitigación para cuándo activar order blocks"
 DevCssTool					= "Mostrar proyección de desviación SFP"
 
-SmcColorInUp				= AllenMint60
-SmcColorInDn				= AllenSky10
-SmcColorLiUp				= AllenMint60
-SmcColorLiDn				= AllenSky10
+SmcBeColorInUp				= AllenMint60
+SmcBeColorInDn				= AllenSky10
+SmcBeColorLiUp				= AllenMint60
+SmcBeColorLiDn				= AllenSky10
 
-SmcColorBreakUp				= AllenFucsia50
-SmcColorBreakDn				= ARoPrimary
+SmcBeColorBreakUp			= AllenFucsia50
+SmcBeColorBreakDn			= ARoPrimary
 
-SmcColorMapEs				= AllenMint20
+SmcBeColorMapEs				= AllenMint20
 
-SmcColorFvgUp				= BrLiYel10
-SmcColorFvgDn				= BrLiYel40
-SmcColorDSwing				= BrLiYel40
+SmcBeColorFvgUp				= BrLiYel10
+SmcBeColorFvgDn				= BrLiYel40
+SmcBeColorDSwing			= BrLiYel40
+SmcBeColorBackGround		= #ffffff00
 
-SmcColorGreen				= PlatziGreen30
-SmcColorFucsia				= AllenFucsia50
-SmcColorYellHigh			= BrLiYel10
-SmcColorYell				= BrLiYel40
-SmcColorBlue				= ARoPrimary
+SmcBeColorGreen				= PlatziGreen30
+SmcBeColorFucsia			= AllenFucsia50
+SmcBeColorYellHigh			= BrLiYel10
+SmcBeColorYell				= BrLiYel40
+SmcBeColorBlue				= ARoPrimary
 
 //// ───────────────────────
 /// ─── SmcB ────
 /// ─── Inputs ──
 //// ───────────────────────
 
-bool windowsis				= input.bool	(true,							title = "Espacio",							inline = "kla",		group = MSGGroup)
-int mswindow				= input.int		(5000,							title = "",									inline = "kla",		group = MSGGroup,		minval = 1000,	tooltip = MsWinTool)
-bool showSwing				= input.bool	(true,							title = "Swing",							inline = "scss",	group = MSGGroup)
-int swingLimit				= input.int		(100,							title = "",									inline = "scss",	group = MSGGroup,		minval = 10,	maxval = 200,	tooltip = SwingLimTool)
-color swingcssup			= input.color	(color.new(SmcColorInUp, 50),	title = "",									inline = "scss",	group = MSGGroup)
-color swingcssdn			= input.color	(color.new(SmcColorInDn, 50),	title = "",									inline = "scss",	group = MSGGroup)
+bool windowsis				= input.bool	(true,								title = "Segmento",							inline = "kla",		group = MSGGroup)
+int mswindow				= input.int		(5000,								title = "",									inline = "kla",		group = MSGGroup,		minval = 1000,	tooltip = MsWinTool)
+bool showSwing				= input.bool	(true,								title = "Quiebres",							inline = "scss",	group = MSGGroup)
+int swingLimit				= input.int		(100,								title = "",									inline = "scss",	group = MSGGroup,		minval = 10,	maxval = 200,	tooltip = SwingLimTool)
+color swingcssup			= input.color	(color.new(SmcBeColorInUp, 50),		title = "",									inline = "scss",	group = MSGGroup)
+color swingcssdn			= input.color	(color.new(SmcBeColorInDn, 50),		title = "",									inline = "scss",	group = MSGGroup)
 
-bool showMapping			= input.bool	(false,							title = "Mapeo de estructura",				inline = "mapping",	group = MSGGroup)
-string mappingStyle			= input.string	("····",						title = "",									inline = "mapping",	group = MSGGroup,
+bool showMapping			= input.bool	(false,								title = "Mapeo de estructura",				inline = "mapping",	group = MSGGroup)
+string mappingStyle			= input.string	("····",							title = "",									inline = "mapping",	group = MSGGroup,
 	  options				= ["⎯⎯⎯⎯", "----", "····"])
-color mappingcss			= input.color	(color.new(SmcColorMapEs, 40),	title = "",									inline = "mapping",	group = MSGGroup,						tooltip = MapStyTool)
-bool candlecss				= input.bool	(false,							title = "Barras de Color",					inline = "txt",		group = MSGGroup,						tooltip = CandLecTool)
-string mstext				= input.string	("Tiny",						title = "",									inline = "txt",		group = MSGGroup,
+color mappingcss			= input.color	(color.new(SmcBeColorMapEs, 40),	title = "",									inline = "mapping",	group = MSGGroup,						tooltip = MapStyTool)
+bool candlecss				= input.bool	(false,								title = "Barras de Color",					inline = "txt",		group = MSGGroup,						tooltip = CandLecTool)
+string mstext				= input.string	("Tiny",							title = "",									inline = "txt",		group = MSGGroup,
 	  options				= ["Tiny", "Small", "Normal", "Large", "Huge"])
-string msmode				= input.string	("Puntos estrechos",			title = "Lógica algorítmica",				inline = "node",	group = MSGGroup,
+string msmode				= input.string	("Puntos estrechos",				title = "Lógica algorítmica",				inline = "node",	group = MSGGroup,
 	  options				= ["Puntos estremos", "Puntos estrechos"])
-int mslen					= input.int		(defval = 5,					title = "",									inline = "node",	group = MSGGroup,		minval = 2)
+int mslen					= input.int		(defval = 5,						title = "",									inline = "node",	group = MSGGroup,		minval = 2)
 
-bool showhl					= input.bool	(true,							title = "Fuerte/Débil HL",					inline = "hl",		group = MSGGroup,						tooltip = ShowHLTool)
-bool buildsweep				= input.bool	(false,							title = "Mostrar Sweep (x)",				inline = "znc",		group = MSGGroup,						tooltip = BuildSwTool)
-bool msbubble				= input.bool	(true,							title = "Burbujas",							inline = "bubbles", group = MSGGroup)
+bool showhl					= input.bool	(true,								title = "Fuerte/Débil HL",					inline = "hl",		group = MSGGroup,						tooltip = ShowHLTool)
+bool buildsweep				= input.bool	(false,								title = "Mostrar Sweep (x)",				inline = "znc",		group = MSGGroup,						tooltip = BuildSwTool)
+bool msbubble				= input.bool	(true,								title = "Burbujas",							inline = "bubbles", group = MSGGroup)
 
-bool obshow					= input.bool	(true,							title = "Mostrar ultimos",					inline = "obshow",	group = VBGGroup,						tooltip = OBDTool)
-int oblast					= input.int		(defval = 5,					title = "",									inline = "obshow",	group = VBGGroup,		minval = 0)
-color obupcs				= input.color	(color.new(SmcColorInUp, 90),	title = "",									inline = "obshow",	group = VBGGroup)
-color obdncs				= input.color	(color.new(SmcColorInDn, 90),	title = "",									inline = "obshow",	group = VBGGroup)
-bool obshowactivity			= input.bool	(false,							title = "Mostrar actividad de Compra/Venta",inline = "act",		group = VBGGroup,						tooltip = OBTTool)
-color obactup				= input.color	(color.new(SmcColorInUp, 75),	title = "",									inline = "act",		group = VBGGroup)
-color obactdn				= input.color	(color.new(SmcColorInDn, 75),	title = "",									inline = "act",		group = VBGGroup)
+bool obshow					= input.bool	(true,								title = "Mostrar ultimos",					inline = "obshow",	group = VBGGroup,						tooltip = OBDTool)
+int oblast					= input.int		(defval = 5,						title = "",									inline = "obshow",	group = VBGGroup,		minval = 0)
+color obupcs				= input.color	(color.new(SmcBeColorInUp, 90),		title = "",									inline = "obshow",	group = VBGGroup)
+color obdncs				= input.color	(color.new(SmcBeColorInDn, 90),		title = "",									inline = "obshow",	group = VBGGroup)
+bool obshowactivity			= input.bool	(false,								title = "Mostrar actividad de Compra/Venta",inline = "act",		group = VBGGroup,						tooltip = OBTTool)
+color obactup				= input.color	(color.new(SmcBeColorInUp, 75),		title = "",									inline = "act",		group = VBGGroup)
+color obactdn				= input.color	(color.new(SmcBeColorInDn, 75),		title = "",									inline = "act",		group = VBGGroup)
 
-obshowbb					= input.bool	(true,							title = "Mostrar Breakers",					inline = "bb",		group = VBGGroup)
-color bbup					= input.color	(color.new(SmcColorBreakUp, 88),title = "",									inline = "bb",		group = VBGGroup)
-color bbdn					= input.color	(color.new(SmcColorBreakDn, 88),title = "",									inline = "bb",		group = VBGGroup)
-obmode						= input.string	("Longitud",					title = "Contrucción",						inline = "atr",		group = VBGGroup,
+obshowbb					= input.bool	(true,								title = "Mostrar Breakers",					inline = "bb",		group = VBGGroup)
+color bbup					= input.color	(color.new(SmcBeColorBreakUp, 88),	title = "",									inline = "bb",		group = VBGGroup)
+color bbdn					= input.color	(color.new(SmcBeColorBreakDn, 88),	title = "",									inline = "bb",		group = VBGGroup)
+obmode						= input.string	("Longitud",						title = "Contrucción",						inline = "atr",		group = VBGGroup,
 	  options				= ["Longitud", "Full"],
 	  tooltip				= OBMTool)
-len							= input.int		(5,								title = "",									inline = "atr",		group = VBGGroup,		minval = 1)
-obmiti						= input.string	("Cierre",						title = "Metodo de Mitigación",									group = VBGGroup,	
+len							= input.int		(5,									title = "",									inline = "atr",		group = VBGGroup,		minval = 1)
+obmiti						= input.string	("Cierre",							title = "Metodo de Mitigación",									group = VBGGroup,	
 	  options				= ["Cierre", "Mecha", "Avg"],
 	  tooltip				= OBMitiTool)
-obtxt						= input.string	("Small",						title = "Tamaño Metrica",					inline = "txt",		group = VBGGroup,
+obtxt						= input.string	("Small",							title = "Tamaño Metrica",					inline = "txt",		group = VBGGroup,
 	  options				= ["Tiny", "Small", "Normal", "Large", "Huge", "Auto"])
 
-showmetric					= input.bool	(true,							title = "Mostrar Metricas",										group = VBGGroup)
-showline					= input.bool	(true,							title = "Mostrar Linea media",									group = VBGGroup)
-overlap						= input.bool	(false,							title = "Ocultar superposición",			inline = "ov",		group = VBGGroup)
-wichlap						= input.string	("Reciente",					title = "",									inline = "ov",		group = VBGGroup,
+showmetric					= input.bool	(true,								title = "Mostrar Metricas",										group = VBGGroup)
+showline					= input.bool	(true,								title = "Mostrar Linea media",									group = VBGGroup)
+overlap						= input.bool	(false,								title = "Ocultar superposición",			inline = "ov",		group = VBGGroup)
+wichlap						= input.string	("Reciente",						title = "",									inline = "ov",		group = VBGGroup,
 	  options				= ["Reciente", "Antiguo"])
 
-fvg_enable					= input.bool	(true,							title = "",									inline = "1",		group = VFvgGroup)
-what_fvg					= input.string	("FVG",							title = "",									inline = "1",		group = VFvgGroup, 
+fvg_enable					= input.bool	(true,								title = "",									inline = "1",		group = VFvgGroup)
+what_fvg					= input.string	("FVG",								title = "",									inline = "1",		group = VFvgGroup, 
 	  options				= ["FVG", "Breakers"])
-fvg_num						= input.int(5,									title = "Mostrar ultimos",					inline = "1a",		group = VFvgGroup,		minval = 0)
-fvg_upcss					= input.color	(color.new(SmcColorFvgUp, 88),	title = "",									inline = "1",		group = VFvgGroup)
-fvg_dncss					= input.color	(color.new(SmcColorFvgDn, 90),	title = "",									inline = "1",		group = VFvgGroup)
-fvgbbup						= input.color	(color.new(SmcColorFvgUp, 90),	title = "",									inline = "1",		group = VFvgGroup)
-fvgbbdn						= input.color	(color.new(SmcColorFvgDn, 92),	title = "",									inline = "1",		group = VFvgGroup)
-fvg_src						= input.string	("Cierre",						title = "Mitigación",						inline = "3",		group = VFvgGroup, 
+fvg_num						= input.int(5,										title = "Mostrar ultimos",					inline = "1a",		group = VFvgGroup,		minval = 0)
+fvg_upcss					= input.color	(color.new(SmcBeColorFvgUp, 88),	title = "",									inline = "1",		group = VFvgGroup)
+fvg_dncss					= input.color	(color.new(SmcBeColorFvgDn, 90),	title = "",									inline = "1",		group = VFvgGroup)
+fvgbbup						= input.color	(color.new(SmcBeColorFvgUp, 90),	title = "",									inline = "1",		group = VFvgGroup)
+fvgbbdn						= input.color	(color.new(SmcBeColorFvgDn, 92),	title = "",									inline = "1",		group = VFvgGroup)
+fvg_src						= input.string	("Cierre",							title = "Mitigación",						inline = "3",		group = VFvgGroup, 
 	  options				= ["Cierre", "Mecha", "Avg"],
 	  tooltip				= FvgSrcTool) 
-fvgthresh					= input.float	(0, 							title = "Umbral",							inline = "asd",		group = VFvgGroup,		minval = 0,		maxval = 2,	step = 0.1)
-fvgoverlap					= input.bool	(true,							title = "Ocultar superposición",								group = VFvgGroup)
-fvgline						= input.bool	(false,							title = "Mostrar Linea media",									group = VFvgGroup)
-fvgextend					= input.bool	(false,							title = "Extender FVG",											group = VFvgGroup)
-dispraid					= input.bool	(true,							title = "Mostrar Raids",					inline = "raid",	group = VFvgGroup)
+fvgthresh					= input.float	(0, 								title = "Umbral",							inline = "asd",		group = VFvgGroup,		minval = 0,		maxval = 2,	step = 0.1)
+fvgoverlap					= input.bool	(true,								title = "Ocultar superposición",								group = VFvgGroup)
+fvgline						= input.bool	(false,								title = "Mostrar Linea media",									group = VFvgGroup)
+fvgextend					= input.bool	(false,								title = "Extender FVG",											group = VFvgGroup)
+dispraid					= input.bool	(true,								title = "Mostrar Raids",					inline = "raid",	group = VFvgGroup)
 
-dispSFP						= input.bool	(true,							title = "Mostrar ultimos",					inline = "sfp",		group = VSwingGroup)
-sfpshow						= input.int		(5,								title = "",									inline = "sfp",		group = VSwingGroup,	minval = 0)
-showdev						= input.bool	(true,							title = "Area de desviación",				inline = "dev",		group = VSwingGroup)
-brsfpcs						= input.color	(color.new(SmcColorDSwing, 65),	title = "",									inline = "sfp",		group = VSwingGroup)
-blsfpcs						= input.color	(color.new(SmcColorDSwing, 55),	title = "",									inline = "sfp",		group = VSwingGroup)
-spfuselen					= input.bool	(true,							title = "Longitud",							inline = "sfx",		group = VSwingGroup)
-sfplen						= input.int		(5,								title = "",									inline = "sfx",		group = VSwingGroup,	minval = 0)
-sfpfilter					= input.string	("Counter Trade",				title = "Filtrado",							inline = "sfp1",	group = VSwingGroup,
+dispSFP						= input.bool	(true,								title = "Mostrar ultimos",					inline = "sfp",		group = VSwingGroup)
+sfpshow						= input.int		(5,									title = "",									inline = "sfp",		group = VSwingGroup,	minval = 0)
+showdev						= input.bool	(true,								title = "Area de desviación",				inline = "dev",		group = VSwingGroup)
+brsfpcs						= input.color	(color.new(SmcBeColorDSwing, 65),	title = "",									inline = "sfp",		group = VSwingGroup)
+blsfpcs						= input.color	(color.new(SmcBeColorDSwing, 55),	title = "",									inline = "sfp",		group = VSwingGroup)
+spfuselen					= input.bool	(true,								title = "Longitud",							inline = "sfx",		group = VSwingGroup)
+sfplen						= input.int		(5,									title = "",									inline = "sfx",		group = VSwingGroup,	minval = 0)
+sfpfilter					= input.string	("Counter Trade",					title = "Filtrado",							inline = "sfp1",	group = VSwingGroup,
 	  options				= ["None", "Trend Following", "Counter Trade"])
-sfpthresh					= input.float	(1,								title = "Umbral",							inline = "sfp2",	group = VSwingGroup,	minval = 0.1,	maxval = 2,	step = 0.1)
-devstyle					= input.string	("⎯⎯⎯⎯",						title = "",									inline = "dev",		group = VSwingGroup,
+sfpthresh					= input.float	(1,									title = "Umbral",							inline = "sfp2",	group = VSwingGroup,	minval = 0.1,	maxval = 2,	step = 0.1)
+devstyle					= input.string	("⎯⎯⎯⎯",							title = "",									inline = "dev",		group = VSwingGroup,
 	  options				= ["⎯⎯⎯⎯", "----", "····"])
-devcss						= input.color	(color.new(SmcColorDSwing, 50),	title = "",									inline = "dev",		group = VSwingGroup,
+devcss						= input.color	(color.new(SmcBeColorDSwing, 50),	title = "",									inline = "dev",		group = VSwingGroup,
 	  tooltip				= DevCssTool)
-devsize						= input.string	("Small",						title = "Tamaño de texto",					inline = "ak",		group = VSwingGroup,
+devsize						= input.string	("Small",							title = "Tamaño de texto",					inline = "ak",		group = VSwingGroup,
 	  options				= ["Tiny", "Small", "Normal", "Large", "Huge", "Auto"],
 	  tooltip				= "Text Size")
-devlvl						= input.bool	(true,							title = "Mostrar Nivel",										group = VSwingGroup)
-devfill						= input.bool	(true,							title = "Rellenar area",										group = VSwingGroup)
-ehlshow						= input.bool	(true,							title = "Equal H&L",						inline = "ehl",		group = VLiqCoGroup)
-ehlmode						= input.string	("Short-Term",					title = "",									inline = "ehl",		group = VLiqCoGroup,
+devlvl						= input.bool	(true,								title = "Mostrar Nivel",										group = VSwingGroup)
+devfill						= input.bool	(true,								title = "Rellenar area",										group = VSwingGroup)
+ehlshow						= input.bool	(true,								title = "Equal H&L",						inline = "ehl",		group = VLiqCoGroup)
+ehlmode						= input.string	("Short-Term",						title = "",									inline = "ehl",		group = VLiqCoGroup,
 	  options				= ["Short-Term", "Mid-Term", "Long-Term"])
-ehldowncs					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
-ehlupcs						= input.color	(color.new(SmcColorLiDn, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
-liqprint					= input.bool	(true,							title = "Impresiones de liquidez",			inline = "print",	group = VLiqCoGroup)
-printupcs					= input.color	(color.new(SmcColorYell, 10),	title = "",									inline = "print",	group = VLiqCoGroup)
-printdowncs					= input.color	(color.new(SmcColorBlue, 10),	title = "",									inline = "print",	group = VLiqCoGroup)
-showside					= input.bool	(true,							title = "Buyside & Sellside", 				inline = "side",	group = VLiqCoGroup)
-sidemode					= input.string	("Area",						title = "",									inline = "side",	group = VLiqCoGroup,
+ehldowncs					= input.color	(color.new(SmcBeColorLiUp, 75),		title = "",									inline = "ehl",		group = VLiqCoGroup)
+ehlupcs						= input.color	(color.new(SmcBeColorLiUp, 75),		title = "",									inline = "ehl",		group = VLiqCoGroup)
+liqprint					= input.bool	(true,								title = "Impresiones de liquidez",			inline = "print",	group = VLiqCoGroup)
+printupcs					= input.color	(color.new(SmcBeColorYell, 10),		title = "",									inline = "print",	group = VLiqCoGroup)
+printdowncs					= input.color	(color.new(SmcBeColorBlue, 10),		title = "",									inline = "print",	group = VLiqCoGroup)
+showside					= input.bool	(true,								title = "Buyside & Sellside", 				inline = "side",	group = VLiqCoGroup)
+sidemode					= input.string	("Line",							title = "",									inline = "side",	group = VLiqCoGroup,
 	  options				= ["Area", "Line"])
-buysidecss					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
-sidesidecss					= input.color	(color.new(SmcColorLiDn, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
-showzone					= input.bool	(true, "Sweep Area",			title = "Zona de liquidación Sweep",		inline = "sz",		group = VLiqCoGroup)
-zonethresh					= input.int		(10,							title = "",									inline = "sz",		group = VLiqCoGroup,	minval = 2)
-upzone						= input.color	(color.new(SmcColorInUp, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
-dnzone						= input.color	(color.new(SmcColorInDn, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
+buysidecss					= input.color	(color.new(SmcBeColorLiUp, 70),		title = "",									inline = "side",	group = VLiqCoGroup)
+sidesidecss					= input.color	(color.new(SmcBeColorLiDn, 70),		title = "",									inline = "side",	group = VLiqCoGroup)
+showzone					= input.bool	(true, "Sweep Area",				title = "Zona de liquidación Sweep",		inline = "sz",		group = VLiqCoGroup)
+zonethresh					= input.int		(10,								title = "",									inline = "sz",		group = VLiqCoGroup,	minval = 2)
+upzone						= input.color	(color.new(SmcBeColorInUp, 60),		title = "",									inline = "sz",		group = VLiqCoGroup)
+dnzone						= input.color	(color.new(SmcBeColorInDn, 60),		title = "",									inline = "sz",		group = VLiqCoGroup)
 
 //// ───────────────────────
 /// ─── SmcB ────
@@ -648,7 +649,7 @@ if barstate.islast
 	bin.bx.clear()
 	bin.lf.clear()
 
-invcol = #ffffff00
+invcol = SmcBeColorBackGround
 
 float atr = (ta.atr(200) / (5/len))
 
@@ -1037,7 +1038,7 @@ method display(ob id, ob[] full, int i) =>
 							 , textcolor = color.new(ids.css, 50)
 							 , style     = label.style_label_left
 							 , size      = obtxt.txSz()
-							 , color     = #ffffff00
+							 , color     = SmcBeColorBackGround
 							 , text      = 
 								 str.tostring(
 									 math.round(full.get(y).vol, 3), format = format.volume) + " (" + str.tostring(dV.get(y)) + "%)"
@@ -1052,7 +1053,7 @@ method dispFVG(FVG fvg, int i, bool bull) =>
 			bin.ln.unshift(line.new(x1  = fvg.loc, x2 = time       , y1 = math.avg(fvg.top, fvg.btm), y2 = math.avg(fvg.top, fvg.btm), xloc = xloc.bar_time, color = color.new(bull ? fvg_upcss : fvg_dncss, 0)                      , extend = ext))
 		if dispraid
 			bin.ln.unshift(line.new(x1  = fvg.raidloc, x2 = fvg.raidx2, y1 = fvg.raidy, y2 = fvg.raidy, xloc = xloc.bar_time, color = fvg.raidcs))
-			bin.lb.unshift(label.new(x = int(math.avg(fvg.raidloc, fvg.raidx2)), y = fvg.raidy, text = "x", xloc = xloc.bar_time, textcolor = fvg.raidcs, style = bull ? label.style_label_up : label.style_label_down, size = size.small, color = #ffffff00))
+			bin.lb.unshift(label.new(x = int(math.avg(fvg.raidloc, fvg.raidx2)), y = fvg.raidy, text = "x", xloc = xloc.bar_time, textcolor = fvg.raidcs, style = bull ? label.style_label_up : label.style_label_down, size = size.small, color = SmcBeColorBackGround))
 
 	else
 		bin.bx.unshift(box .new(top = fvg.top  , bottom = fvg.btm, left = fvg.loc                   , right = fvg.bbloc              , border_color = na                                 , bgcolor = bull ? fvg_upcss : fvg_dncss, xloc = xloc.bar_time))
@@ -1278,7 +1279,7 @@ dEHL() =>
 						 label.new(
 							   x         = labe.x
 							 , y         = labe.y
-							 , color     = #ffffff00
+							 , color     = SmcBeColorBackGround
 							 , style     = labe.style
 							 , textcolor = labe.css
 							 , size      = mstext.txSz()
@@ -1305,7 +1306,7 @@ dEHL() =>
 						 label.new(
 							   x         = labe.x
 							 , y         = labe.y
-							 , color     = #ffffff00
+							 , color     = SmcBeColorBackGround
 							 , style     = labe.style
 							 , textcolor = labe.css
 							 , size      = mstext.txSz()
@@ -1501,7 +1502,7 @@ method SFP(structure ms) =>
 						   x = x.x
 						 , y = x.y
 						 , text = x.txt
-						 , color = #ffffff00
+						 , color = SmcBeColorBackGround
 						 , style = x.style
 						 , size = size
 						 , textcolor = x.css
@@ -1517,7 +1518,7 @@ method SFP(structure ms) =>
 						   x = x.x
 						 , y = x.y
 						 , text = x.txt
-						 , color = #ffffff00
+						 , color = SmcBeColorBackGround
 						 , style = x.style
 						 , size = size
 						 , textcolor = x.css
@@ -1574,9 +1575,9 @@ method SFP(structure ms) =>
 								 )
 
 					if devlvl
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = chart.fg_color, color = #ffffff00, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss        , color = #ffffff00, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss        , color = #ffffff00, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = chart.fg_color, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss        , color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss        , color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
 
 				true => 
 					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 4.0 * (use.ancor - use.y), y2 = use.ancor + 4.0 * (use.ancor - use.y), xloc = xloc.bar_time, color = chart.fg_color, style = devstyle.lstyle()))
@@ -1592,9 +1593,9 @@ method SFP(structure ms) =>
 								 )
 
 					if devlvl
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = chart.fg_color, color = #ffffff00, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss, color = #ffffff00, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss, color = #ffffff00, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = chart.fg_color, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
 
 
 dFVG() =>
@@ -1625,7 +1626,7 @@ dFVG() =>
 				fvg.raidloc := na
 				fvg.raidx2  := na
 				fvg.raidy   := na
-				fvg.raidcs  := #ffffff00
+				fvg.raidcs  := SmcBeColorBackGround
 
 		blFVG.unshift(
 			 FVG.new(
@@ -1647,7 +1648,7 @@ dFVG() =>
 				fvg.raidloc := na
 				fvg.raidx2  := na
 				fvg.raidy   := na
-				fvg.raidcs  := #ffffff00
+				fvg.raidcs  := SmcBeColorBackGround
 
 		brFVG.unshift(
 			 FVG.new(
@@ -2335,7 +2336,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					 label.new(
 						   x         = bar_index
 						 , y         = side.top
-						 , color     = #ffffff00
+						 , color     = SmcBeColorBackGround
 						 , style     = label.style_label_up
 						 , textcolor = color.new(side.css, 0)
 						 , size      = size.small
@@ -2390,7 +2391,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					 label.new(
 						   x         = bar_index
 						 , y         = side.top
-						 , color     = #ffffff00
+						 , color     = SmcBeColorBackGround
 						 , style     = label.style_label_down
 						 , textcolor = color.new(side.css, 0)
 						 , size      = size.small
@@ -2468,7 +2469,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						   x         = int(math.avg(bin.ln.get(0).get_x1(), bin.ln.get(0).get_x2()))
 						 , y         = obj.y
 						 , xloc      = xloc.bar_time
-						 , color     = #ffffff00
+						 , color     = SmcBeColorBackGround
 						 , style     = label.style_label_down
 						 , textcolor = obj.css
 						 , size      = mstext.txSz()
@@ -2507,7 +2508,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						   x         = int(math.avg(bin.ln.get(0).get_x1(), bin.ln.get(0).get_x2()))
 						 , y         = obj.y
 						 , xloc      = xloc.bar_time
-						 , color     = #ffffff00
+						 , color     = SmcBeColorBackGround
 						 , style     = label.style_label_up
 						 , textcolor = obj.css
 						 , size      = mstext.txSz()
