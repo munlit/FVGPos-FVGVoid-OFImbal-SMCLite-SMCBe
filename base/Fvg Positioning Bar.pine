@@ -268,17 +268,17 @@ BrLiYel40								= #FEF301								// BrightLine Yellow Nit
 
 //// ─────────────────────────────────────────────────────────────────────
 
-var grpFvgPosSect	= "Visualización Fvg Posisioning"
+var grpFvgPosSect	= " ─── Visualización Fvg Posisioning ─── "
 
-colFvgPosLong		= input.color(color.new(BrLiYel40, 80),			title = "Compra",		inline = "colorFvgPosi",		group = grpFvgPosSect)
-colFvgPosShort		= input.color(color.new(BrLiYel10, 70),			title = "Venta",		inline = "colorFvgPosi",		group = grpFvgPosSect)
+colFvgPosLong		= input.color(color.new(BrLiYel40, 88),			title = "Compra",		inline = "colorFvgPosi",		group = grpFvgPosSect)
+colFvgPosShort		= input.color(color.new(BrLiYel10, 92),			title = "Venta",		inline = "colorFvgPosi",		group = grpFvgPosSect)
 
 //// ───────────────────────
 /// ─── Fvg Posit ──
 /// ─── Variables ──
 //// ───────────────────────
 
-vFvgAtrMulti		= input.float(0.25,	title = " ATR ",			step  = 0.25,			group = grpFvgPosSect)
+vFvgAtrMulti		= input.float(0.25,								title = "ATR",			step  = 0.25,					group = grpFvgPosSect)
 
 //// ───────────────────────
 /// ─── Fvg Posit ──

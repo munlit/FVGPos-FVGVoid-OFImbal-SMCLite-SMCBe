@@ -305,7 +305,7 @@ AllenWine50								= #E91E63								// AllenWine50
 /// ─── Const ──
 //// ───────────────────────
 
-MSGGroup					= "Smart Money Concept Belu - ESTRUCTURA DEL MERCADO"
+MSGGroup					= " ─── Smart Money Concept Belu & ESTRUCTURA DEL MERCADO ─── "
 VBGGroup					= "ORDER BLOCKS VOLUMÉTRICO"
 VFvgGroup					= "FAIR VALUE GAP"
 VSwingGroup					= "PATRÓN de QUIEBRE de SWING"
@@ -329,8 +329,8 @@ DevCssTool					= "Mostrar proyección de desviación SFP"
 
 SmcColorInUp				= AllenMint60
 SmcColorInDn				= AllenSky10
-SmcColorLiUp				= ARoPrimary
-SmcColorLiDn				= AllenWine50
+SmcColorLiUp				= AllenMint60
+SmcColorLiDn				= AllenSky10
 
 SmcColorBreakUp				= AllenFucsia50
 SmcColorBreakDn				= ARoPrimary
@@ -440,17 +440,17 @@ devfill						= input.bool	(true,							title = "Rellenar area",										group =
 ehlshow						= input.bool	(true,							title = "Equal H&L",						inline = "ehl",		group = VLiqCoGroup)
 ehlmode						= input.string	("Short-Term",					title = "",									inline = "ehl",		group = VLiqCoGroup,
 	  options				= ["Short-Term", "Mid-Term", "Long-Term"])
-ehldowncs					= input.color	(color.new(SmcColorYell,75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
-ehlupcs						= input.color	(color.new(SmcColorBlue, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
+ehldowncs					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
+ehlupcs						= input.color	(color.new(SmcColorLiDn, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
 liqprint					= input.bool	(true,							title = "Impresiones de liquidez",			inline = "print",	group = VLiqCoGroup)
-printupcs					= input.color	(color.new(SmcColorYellHigh,50),title = "",									inline = "print",	group = VLiqCoGroup)
-printdowncs					= input.color	(color.new(SmcColorBlue,50),	title = "",									inline = "print",	group = VLiqCoGroup)
+printupcs					= input.color	(color.new(SmcColorYell, 10),	title = "",									inline = "print",	group = VLiqCoGroup)
+printdowncs					= input.color	(color.new(SmcColorBlue, 10),	title = "",									inline = "print",	group = VLiqCoGroup)
 showside					= input.bool	(true,							title = "Buyside & Sellside", 				inline = "side",	group = VLiqCoGroup)
 sidemode					= input.string	("Area",						title = "",									inline = "side",	group = VLiqCoGroup,
 	  options				= ["Area", "Line"])
 buysidecss					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
 sidesidecss					= input.color	(color.new(SmcColorLiDn, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
-showzone					= input.bool	(true, "Sweep Area",			title = "Mostrar zona de liquidación Sweep",inline = "sz",		group = VLiqCoGroup)
+showzone					= input.bool	(true, "Sweep Area",			title = "Zona de liquidación Sweep",		inline = "sz",		group = VLiqCoGroup)
 zonethresh					= input.int		(10,							title = "",									inline = "sz",		group = VLiqCoGroup,	minval = 2)
 upzone						= input.color	(color.new(SmcColorInUp, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
 dnzone						= input.color	(color.new(SmcColorInDn, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
@@ -2338,7 +2338,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						 , color     = #ffffff00
 						 , style     = label.style_label_up
 						 , textcolor = color.new(side.css, 0)
-						 , size      = mstext.txSz()
+						 , size      = size.small
+						//  , size      = mstext.txSz()
 						 , text      = "Buyside - " + str.tostring(math.floor((side.vol / sum) * 100)) + "%"
 						  )
 						 )
@@ -2392,7 +2393,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						 , color     = #ffffff00
 						 , style     = label.style_label_down
 						 , textcolor = color.new(side.css, 0)
-						 , size      = mstext.txSz()
+						 , size      = size.small
+						//  , size      = mstext.txSz()
 						 , text      = "Sellside - "+ str.tostring(math.floor((side.vol / sum) * 100)) + "%"
 						  )
 						 )

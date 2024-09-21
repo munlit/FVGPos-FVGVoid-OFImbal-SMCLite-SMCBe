@@ -278,9 +278,9 @@ BrLiYel40								= #FEF301								// BrightLineBackground Yellow Nit
 /// ─── Variables ──
 //// ───────────────────────
 
-var ofImbgrpImbalance				= " Visualización OrderFlow Imbalance"
+var ofImbgrpImbalance				= " ─── Visualización OrderFlow Imbalance ─── "
 ofImbVaradboxcountimbalance			= input.int		(defval = 50,				title = "Rango de Visualización",	inline = "imbgl",		group = ofImbgrpImbalance)
-ofImbVarboxcolorimbalance			= input.color	(color.new(BrLiYel10, 80),	title = "Color de Imbalance",		inline = "imbgl",		group = ofImbgrpImbalance)
+ofImbVarboxcolorimbalance			= input.color	(color.new(BrLiYel10, 92),	title = "Color",					inline = "imbgl",		group = ofImbgrpImbalance)
 
 //// ───────────────────────
 /// ─── Imbalance ──

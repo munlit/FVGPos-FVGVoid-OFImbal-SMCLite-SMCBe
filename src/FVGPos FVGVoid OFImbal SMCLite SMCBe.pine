@@ -293,7 +293,7 @@ PlatziBlue70							= #121F3D								// PlatziBlue70
 /// ─── Allen ───
 AllenSky10								= #CCF8FF								// AllenSky10
 	// AllenSky20								= #80F3EC								// AllenSky20
-	// AllenSky50								= #01ebf9								// AllenSky50
+AllenSky50								= #01ebf9								// AllenSky50
 
 	// AllenMint10								= #E0F9EF								// AllenMint10
 AllenMint20								= #9CFFD7								// AllenMint20
@@ -309,17 +309,17 @@ AllenWine50								= #E91E63								// AllenWine50
 
 //// ─────────────────────────────────────────────────────────────────────
 
-var grpFvgPosSect	= "Visualización Fvg Positioning"
+var grpFvgPosSect	= " ─── Visualización Fvg Positioning ─── "
 
-colFvgPosLong		= input.color(color.new(BrLiYel40, 80),			title = "Compra",		inline = "colorFvgPosi",		group = grpFvgPosSect)
-colFvgPosShort		= input.color(color.new(BrLiYel10, 70),			title = "Venta",		inline = "colorFvgPosi",		group = grpFvgPosSect)
+colFvgPosLong		= input.color(color.new(BrLiYel40, 92),			title = "Compra",		inline = "colorFvgPosi",		group = grpFvgPosSect)
+colFvgPosShort		= input.color(color.new(BrLiYel10, 94),			title = "Venta",		inline = "colorFvgPosi",		group = grpFvgPosSect)
 
 //// ───────────────────────
 /// ─── Fvg Posit ──
 /// ─── Variables ──
 //// ───────────────────────
 
-vFvgAtrMulti		= input.float(0.25,	title = " ATR ",			step  = 0.25,			group = grpFvgPosSect)
+vFvgAtrMulti		= input.float(0.25,								title = "ATR",			step  = 0.25,					group = grpFvgPosSect)
 
 //// ───────────────────────
 /// ─── Fvg Posit ──
@@ -371,12 +371,12 @@ if fvgDetectDown
 
 //// ─────────────────────────────────────────────────────────────────────
 
-groupLiquidFvg		= "Detección de Liquidez (Fvg Void)"
+groupLiquidFvg		= " ─── Detección de Liquidez (Fvg Void) ─── "
 
-vLiquidBC			= input.color		(color.new(BrLiYel30, 86),			title = 'Compra',				inline = 'vColor',			group = groupLiquidFvg)
-vLiquidSC			= input.color		(color.new(BrLiYel10, 90),			title = 'Venta',				inline = 'vColor',			group = groupLiquidFvg)
-vLiquidFC			= input.color		(color.new(BrLiYel10, 90),			title = 'Neutral',				inline = 'vtColor',			group = groupLiquidFvg)
-vLiquidFont			= input.color		(color.new(GraySwebDivider, 80),	title = 'Fuente',				inline = 'vtColor',			group = groupLiquidFvg)
+vLiquidBC			= input.color		(color.new(BrLiYel30, 93),			title = 'Compra',				inline = 'vColor',			group = groupLiquidFvg)
+vLiquidSC			= input.color		(color.new(BrLiYel10, 93),			title = 'Venta',				inline = 'vColor',			group = groupLiquidFvg)
+vLiquidFC			= input.color		(color.new(BrLiYel10, 93),			title = 'Neutral',				inline = 'vtColor',			group = groupLiquidFvg)
+vLiquidFont			= input.color		(color.new(GraySwebDivider, 88),	title = 'Fuente',				inline = 'vtColor',			group = groupLiquidFvg)
 
 //// ───────────────────────
 /// ─── Fvg Void ────
@@ -502,9 +502,9 @@ if vLiquidVisual and vLiquidV.size() > 0
 /// ─── Variables ──
 //// ───────────────────────
 
-var ofImbgrpImbalance				= " Visualización OrderFlow Imbalance"
+var ofImbgrpImbalance				= " ─── Visualización OrderFlow Imbalance ─── "
 ofImbVaradboxcountimbalance			= input.int		(defval = 50,				title = "Rango de Visualización",	inline = "imbgl",		group = ofImbgrpImbalance)
-ofImbVarboxcolorimbalance			= input.color	(color.new(BrLiYel10, 80),	title = "Color de Imbalance",		inline = "imbgl",		group = ofImbgrpImbalance)
+ofImbVarboxcolorimbalance			= input.color	(color.new(BrLiYel10, 92),	title = "Color",					inline = "imbgl",		group = ofImbgrpImbalance)
 
 //// ───────────────────────
 /// ─── Imbalance ──
@@ -563,21 +563,21 @@ ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray)
 /// ─── Variables ──
 //// ───────────────────────
 
-smcLiGroupSett					= 'Configuración SMC Lite'
+smcLiGroupSett					= ' ─── Configuración SMC Lite ─── '
 smcLiGroupShow					= 'Visualización SMC Lite'
 
 /// ─── Visualización
-smcLiVarShowZigzag				= input.bool	(false,								title = 'Mostrar Zig Zag',					group = smcLiGroupShow,			inline = '1')
-smcLiVarShowPriceActionLabels	= input.bool	(false,								title = 'Mostrar Acción de Precio',			group = smcLiGroupShow,			inline = '2')
+smcLiVarShowZigzag				= input.bool	(false,								title = 'Mostrar Zig Zag                ',	group = smcLiGroupShow,			inline = '1')
+smcLiVarShowPriceActionLabels	= input.bool	(false,								title = 'Mostrar Price Action',				group = smcLiGroupShow,			inline = '2')
 
-smcLiColorZigZag				= input.color	(color.new(BrLiYel40, 40),			title = '                 Linea  ',			group = smcLiGroupShow,			inline = '1')
-smcLiColorSwingType				= input.color	(PlatziBlue50,						title = '    Texto ',						group = smcLiGroupShow,			inline = '2')
+smcLiColorZigZag				= input.color	(color.new(BrLiYel40, 40),			title = '   Linea ',						group = smcLiGroupShow,			inline = '1')
+smcLiColorSwingType				= input.color	(color.new(AllenSky50, 40),			title = '   Texto ',						group = smcLiGroupShow,			inline = '2')
 
-smcLiColorSupply				= input.color	(color.new(AllenSky10, 70),			title = '    Oferta     ',					group = smcLiGroupShow,			inline = '3')
-smcLiColorSupplyOutline			= input.color	(color.new(AllenSky10, 90),			title = '   Contorno ',						group = smcLiGroupShow,			inline = '3')
+smcLiColorSupply				= input.color	(color.new(AllenWine50, 75),		title = '    Oferta     ',					group = smcLiGroupShow,			inline = '3')
+smcLiColorSupplyOutline			= input.color	(color.new(AllenWine50, 88),		title = '   Contorno ',						group = smcLiGroupShow,			inline = '3')
 
-smcLiColorDemand				= input.color	(color.new(AllenMint60, 70),		title = '    Demanda ',						group = smcLiGroupShow,			inline = '4')
-smcLiColorDemandOutline			= input.color	(color.new(AllenMint60, 90),		title = '   Contorno ',						group = smcLiGroupShow,			inline = '4')
+smcLiColorDemand				= input.color	(color.new(ARoPrimary, 75),			title = '    Demanda ',						group = smcLiGroupShow,			inline = '4')
+smcLiColorDemandOutline			= input.color	(color.new(ARoPrimary, 88),			title = '   Contorno ',						group = smcLiGroupShow,			inline = '4')
 
 // smcLiColorBOSLongLine			= input.color	(color.new(AllenSky10, 30),			title = ' Bos Compra',						group = smcLiGroupShow,			inline = '5')
 // smcLiColorBOSShortLine			= input.color	(color.new(AllenMint60, 30),		title = ' Bos Venta ',						group = smcLiGroupShow,			inline = '5')
@@ -865,7 +865,7 @@ if not smcLiVarDirUp
 /// ─── Const ──
 //// ───────────────────────
 
-MSGGroup					= "Smart Money Concept Belu - ESTRUCTURA DEL MERCADO"
+MSGGroup					= " ─── Smart Money Concept Belu & ESTRUCTURA DEL MERCADO ─── "
 VBGGroup					= "ORDER BLOCKS VOLUMÉTRICO"
 VFvgGroup					= "FAIR VALUE GAP"
 VSwingGroup					= "PATRÓN de QUIEBRE de SWING"
@@ -1000,17 +1000,17 @@ devfill						= input.bool	(true,							title = "Rellenar area",										group =
 ehlshow						= input.bool	(true,							title = "Equal H&L",						inline = "ehl",		group = VLiqCoGroup)
 ehlmode						= input.string	("Short-Term",					title = "",									inline = "ehl",		group = VLiqCoGroup,
 	  options				= ["Short-Term", "Mid-Term", "Long-Term"])
-ehldowncs					= input.color	(color.new(SmcColorYell,75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
-ehlupcs						= input.color	(color.new(SmcColorBlue, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
+ehldowncs					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
+ehlupcs						= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "ehl",		group = VLiqCoGroup)
 liqprint					= input.bool	(true,							title = "Impresiones de liquidez",			inline = "print",	group = VLiqCoGroup)
-printupcs					= input.color	(color.new(SmcColorYellHigh,50),title = "",									inline = "print",	group = VLiqCoGroup)
-printdowncs					= input.color	(color.new(SmcColorBlue,50),	title = "",									inline = "print",	group = VLiqCoGroup)
+printupcs					= input.color	(color.new(SmcColorYell, 10),	title = "",									inline = "print",	group = VLiqCoGroup)
+printdowncs					= input.color	(color.new(SmcColorBlue, 10),	title = "",									inline = "print",	group = VLiqCoGroup)
 showside					= input.bool	(true,							title = "Buyside & Sellside", 				inline = "side",	group = VLiqCoGroup)
 sidemode					= input.string	("Area",						title = "",									inline = "side",	group = VLiqCoGroup,
 	  options				= ["Area", "Line"])
 buysidecss					= input.color	(color.new(SmcColorLiUp, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
 sidesidecss					= input.color	(color.new(SmcColorLiDn, 75),	title = "",									inline = "side",	group = VLiqCoGroup)
-showzone					= input.bool	(true, "Sweep Area",			title = "Mostrar zona de liquidación Sweep",inline = "sz",		group = VLiqCoGroup)
+showzone					= input.bool	(true, "Sweep Area",			title = "Zona de liquidación Sweep",		inline = "sz",		group = VLiqCoGroup)
 zonethresh					= input.int		(10,							title = "",									inline = "sz",		group = VLiqCoGroup,	minval = 2)
 upzone						= input.color	(color.new(SmcColorInUp, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
 dnzone						= input.color	(color.new(SmcColorInDn, 80),	title = "",									inline = "sz",		group = VLiqCoGroup)
@@ -2898,7 +2898,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						 , color     = #ffffff00
 						 , style     = label.style_label_up
 						 , textcolor = color.new(side.css, 0)
-						 , size      = mstext.txSz()
+						 , size      = size.small
+						//  , size      = mstext.txSz()
 						 , text      = "Buyside - " + str.tostring(math.floor((side.vol / sum) * 100)) + "%"
 						  )
 						 )
@@ -2952,7 +2953,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						 , color     = #ffffff00
 						 , style     = label.style_label_down
 						 , textcolor = color.new(side.css, 0)
-						 , size      = mstext.txSz()
+						 , size      = size.small
+						//  , size      = mstext.txSz()
 						 , text      = "Sellside - "+ str.tostring(math.floor((side.vol / sum) * 100)) + "%"
 						  )
 						 )

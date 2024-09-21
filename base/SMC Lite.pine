@@ -276,7 +276,7 @@ PlatziBlue70							= #121F3D								// PlatziBlue70
 /// ─── Allen ───
 AllenSky10								= #CCF8FF								// AllenSky10
 	// AllenSky20								= #80F3EC								// AllenSky20
-	// AllenSky50								= #01ebf9								// AllenSky50
+AllenSky50								= #01ebf9								// AllenSky50
 
 	// AllenMint10								= #E0F9EF								// AllenMint10
 	// AllenMint20								= #9CFFD7								// AllenMint20
@@ -297,21 +297,21 @@ AllenMint60								= #33FFAC								// AllenMint60
 /// ─── Variables ──
 //// ───────────────────────
 
-smcLiGroupSett					= 'Configuración SMC Lite'
+smcLiGroupSett					= ' ─── Configuración SMC Lite ─── '
 smcLiGroupShow					= 'Visualización SMC Lite'
 
 /// ─── Visualización
-smcLiVarShowZigzag				= input.bool	(false,								title = 'Mostrar Zig Zag',					group = smcLiGroupShow,			inline = '1')
-smcLiVarShowPriceActionLabels	= input.bool	(false,								title = 'Mostrar Acción de Precio',			group = smcLiGroupShow,			inline = '2')
+smcLiVarShowZigzag				= input.bool	(false,								title = 'Mostrar Zig Zag                ',	group = smcLiGroupShow,			inline = '1')
+smcLiVarShowPriceActionLabels	= input.bool	(false,								title = 'Mostrar Price Action',				group = smcLiGroupShow,			inline = '2')
 
-smcLiColorZigZag				= input.color	(color.new(BrLiYel40, 40),			title = '                 Linea  ',			group = smcLiGroupShow,			inline = '1')
-smcLiColorSwingType				= input.color	(PlatziBlue50,						title = '    Texto ',						group = smcLiGroupShow,			inline = '2')
+smcLiColorZigZag				= input.color	(color.new(BrLiYel40, 40),			title = '   Linea ',						group = smcLiGroupShow,			inline = '1')
+smcLiColorSwingType				= input.color	(color.new(AllenSky50, 40),			title = '   Texto ',						group = smcLiGroupShow,			inline = '2')
 
-smcLiColorSupply				= input.color	(color.new(AllenSky10, 70),			title = '    Oferta     ',					group = smcLiGroupShow,			inline = '3')
-smcLiColorSupplyOutline			= input.color	(color.new(AllenSky10, 90),			title = '   Contorno ',						group = smcLiGroupShow,			inline = '3')
+smcLiColorSupply				= input.color	(color.new(AllenWine50, 75),		title = '    Oferta     ',					group = smcLiGroupShow,			inline = '3')
+smcLiColorSupplyOutline			= input.color	(color.new(AllenWine50, 88),		title = '   Contorno ',						group = smcLiGroupShow,			inline = '3')
 
-smcLiColorDemand				= input.color	(color.new(AllenMint60, 70),		title = '    Demanda ',						group = smcLiGroupShow,			inline = '4')
-smcLiColorDemandOutline			= input.color	(color.new(AllenMint60, 90),		title = '   Contorno ',						group = smcLiGroupShow,			inline = '4')
+smcLiColorDemand				= input.color	(color.new(ARoPrimary, 75),			title = '    Demanda ',						group = smcLiGroupShow,			inline = '4')
+smcLiColorDemandOutline			= input.color	(color.new(ARoPrimary, 88),			title = '   Contorno ',						group = smcLiGroupShow,			inline = '4')
 
 // smcLiColorBOSLongLine			= input.color	(color.new(AllenSky10, 30),			title = ' Bos Compra',						group = smcLiGroupShow,			inline = '5')
 // smcLiColorBOSShortLine			= input.color	(color.new(AllenMint60, 30),		title = ' Bos Venta ',						group = smcLiGroupShow,			inline = '5')

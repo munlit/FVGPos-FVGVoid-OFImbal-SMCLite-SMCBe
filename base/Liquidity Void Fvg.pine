@@ -270,7 +270,7 @@ BrLiYel30								= #FDF43C								// BrightLineB Yellow High
 
 //// ─────────────────────────────────────────────────────────────────────
 
-groupLiquidFvg		= "Detección de Liquidez (Fvg Void)"
+groupLiquidFvg		= " ─── Detección de Liquidez (Fvg Void) ─── "
 
 vLiquidBC			= input.color		(color.new(BrLiYel30, 86),			title = 'Compra',				inline = 'vColor',			group = groupLiquidFvg)
 vLiquidSC			= input.color		(color.new(BrLiYel10, 90),			title = 'Venta',				inline = 'vColor',			group = groupLiquidFvg)
