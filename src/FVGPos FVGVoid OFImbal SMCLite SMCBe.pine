@@ -13,13 +13,102 @@
 /// ╚═══════════════════════════════╝
 
 //@version=5
-indicator("FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]", "FVGpo & FVGvo & OFim & SMCl & SMC",
+indicator('FVG Pos & FVG Void & OF Imbal & SMC Lite & SMC Be [@Allen]', 'FVGpo & FVGvo & OFim & SMCl & SMC',
 			 overlay					= true, 
 			 max_bars_back				= 5000, 
 			 max_boxes_count			= 500, 
 			 max_labels_count			= 500, 
 			 max_lines_count			= 500, 
 			 max_polylines_count		= 100)
+
+
+/// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+
+/// ＩＮＰＵＴＳ ――――――――――――――――――――――――
+
+
+globalGroupIndicat						= 'Visualización Global'
+
+/// Visual Global ―――――――――――――――――――
+display_FvgPositioning					= input.bool	(defval = true,			title = 'Mostrar Positioning',		group = globalGroupIndicat)
+
+display_LiqVodVoid						= input.bool	(defval = true,			title = 'Mostrar Liquidity Void',	group = globalGroupIndicat)
+
+// display_OfImbImbalance					= input.bool	(defval = true,			title = "Mostrar Imbalance",		group = globalGroupIndicat)
+
+
+
+/// ＴＰＳ ―――――――――――――――――――――――――――――――――
+
+
+type globalTypeOHL
+	float O						    	= open
+	float H				    			= high
+	float L				    			= low
+	float C				    			= close
+	float V				    			= volume
+	int   I				    			= bar_index
+
+
+/// ＦＵＮＣＴＩＯＮＳ ――――――――――――――――――――――
+
+/// ─── function text size
+method FunGlobalTextSize(string _textsize) =>
+	_result = switch _textsize
+		'Mini'							=> size.tiny
+		'Pequeño'						=> size.small
+		'Normal'						=> size.normal
+		'Grande'						=> size.large
+		'Enorme'						=> size.huge
+		'Auto'							=> size.auto
+
+	_result
+
+/// ─── function line style
+method FunGlobalLineStyle(string _linestyle) =>
+	switch _linestyle
+		'⎯⎯⎯⎯'							=> line.style_solid
+		'----'							=> line.style_dashed
+		'····'							=> line.style_dotted
+
+/// ─── function Days of Week
+FunGlobalDayofWeek(_days) =>
+	switch _days
+		1								=> 'Domingo'
+		2								=> 'Lunes'
+		3								=> 'Martes'
+		4								=> 'Miercoles'
+		5								=> 'Jueves'
+		6								=> 'Viernes'
+		7								=> 'Sabado'
+
+/// ─── function Timezone
+FunGlobalTimeZone(_timezone) =>
+	switch _timezone
+		'NYSE'							=> 'UTC-5'
+		'New York'						=> 'America/New_York'
+		'Chicago'						=> 'America/Chicago'
+		'Londres'						=> 'Europe/London'
+		'Tokyo'							=> 'Asia/Tokyo'
+		'Shanghai'						=> 'Asia/Shanghai'
+		'Sydney'						=> 'Australia/Sydney'
+		'Argentina'						=> 'America/Argentina/Buenos_Aires'
+
+
+/// ＩＮＳＴＡＮＣＳ ――――――――――――――――――――
+
+
+gblSource								= globalTypeOHL.new()
+
+
+/// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+
+/// ╔═══════════════════════════════╗
+/// ║ 	Fvg Positioning Bar			║
+/// ║ 	@	Allen.					║
+/// ╚═══════════════════════════════╝
 
 
 //// ─────────────────────────────────────────────────────────────────────
@@ -48,31 +137,31 @@ AllenWine50								= #E91E63								//	AllenWine50
 
 //// ─────────────────────────────────────────────────────────────────────
 
-var grpFvgPosSect						= " ─── Visualización Fvg Positioning ─── "
+var grpFvgPosSect						= ' VISUALIZACIÓN FVG POSITIONING '
 
-colFvgPosLong							= input.color(color.new(BrLiYel40, 85),			title = "Compra",		inline = "colorFvgPosi",		group = grpFvgPosSect)
-colFvgPosShort							= input.color(color.new(BrLiYel10, 85),			title = "Venta",		inline = "colorFvgPosi",		group = grpFvgPosSect)
+co_FvgPosLong							= input.color(color.new(BrLiYel40, 85),				title = 'Compra',							group = grpFvgPosSect,			inline = 'colorFvgPosi')
+co_FvgPosShort							= input.color(color.new(BrLiYel10, 85),				title = 'Venta',							group = grpFvgPosSect,			inline = 'colorFvgPosi')
 
 
 /// ＩＮＰＵＴＳ ――――――――――――――――――――――――
 
 
-vFvgAtrMulti							= input.float(0.25,								title = "ATR",			step  = 0.25,					group = grpFvgPosSect)
+vFvgAtrMulti							= input.float(0.25,									title = 'ATR',								group = grpFvgPosSect,			step  = 0.25)
 
 
 /// ＦＵＮＣＴＩＯＮＳ ―――――――――――――――――――
 
 
 /// ─── Art ──
-fvgPosAtr								= nz(ta.atr(200)*vFvgAtrMulti, ta.cum(high - low) / (bar_index+1))
+fvgPosAtr								= nz(ta.atr(200)*vFvgAtrMulti, ta.cum(gblSource.H - gblSource.L) / (bar_index+1))
 
 /// ─── Fvg detect ─
-fvgDetectUp								= low	> high[2]	and close[1] > high[2]	and (low-high[2]) > fvgPosAtr
-fvgDetectDown							= high	< low[2]	and close[1] < low[2]	and (low[2]-high) > fvgPosAtr
+fvgDetectUp								= gblSource.L	> gblSource.H[2]	and gblSource.C[1] > gblSource.H[2]	and (gblSource.L-gblSource.H[2]) > fvgPosAtr
+fvgDetectDown							= gblSource.H	< gblSource.L[2]	and gblSource.C[1] < gblSource.L[2]	and (gblSource.L[2]-gblSource.H) > fvgPosAtr
 
-/// ─── Highest & Lowest
-fvgPoshst								= ta.highest	(high,	5)
-fvgPoslst								= ta.lowest		(low,	5)
+/// ─── highest & lowest
+fvgPoshst								= ta.highest(gblSource.H,	5)
+fvgPoslst								= ta.lowest(gblSource.L,	5)
 
 /// ─── Math ───
 var fvgArrUp							= array.new_box(na)
@@ -82,18 +171,18 @@ var fvgArrDown							= array.new_box(na)
 /// ＰＬＯＴ ―――――――――――――――――――――――――――
 
 /// ─── Fvg Up ─────
-if fvgDetectUp
+if fvgDetectUp and display_FvgPositioning
 	fvgArrUp.push(
-	  box.new(bar_index[2], low, bar_index, high[2]
-	  , border_color					= colFvgPosLong
-	  , bgcolor							= colFvgPosLong))
+	  box.new(bar_index[2], gblSource.L, bar_index, gblSource.H[2]
+	  , border_color					= co_FvgPosLong
+	  , bgcolor							= co_FvgPosLong))
 
 /// ─── Fvg Down ───
-if fvgDetectDown
+if fvgDetectDown and display_FvgPositioning
 	fvgArrDown.push(
-	  box.new(bar_index[2],  low[2], bar_index, high
-	  , border_color					= colFvgPosShort
-	  , bgcolor							= colFvgPosShort))
+	  box.new(bar_index[2],  gblSource.L[2], bar_index, gblSource.H
+	  , border_color					= co_FvgPosShort
+	  , bgcolor							= co_FvgPosShort))
 
 
 /// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -106,121 +195,95 @@ if fvgDetectDown
 
 //// ─────────────────────────────────────────────────────────────────────
 
-tLiquidmdTT								= 'La opción modalidad controla el número de objetos visuales presentados, donde\n\n- Histórico, tiene en cuenta todos los datos disponibles para el usuarion\n- Presente, tiene en cuenta solo las últimas X barras especificadas en la opción de \'# Barras \' '
-vLiquidTT								= 'Actúa como filtro mientras detectas los vacíos de liquidez. Cuando se establece en 0 significa que no se aplica ningún filtrado, al aumentar el valor se hace que el script compruebe el ancho del vacío en comparación con un valor de ATR de longitud fija'
-vLiquidFT								= 'Alterna la visibilidad de los vacíos de liquidez cubiertos'
+tLiqVodmdTT								= 'La opción modalidad controla el número de objetos visuales presentados, donde\n\n- Histórico, tiene en cuenta todos los datos disponibles para el usuarion\n- Presente, tiene en cuenta solo las últimas X barras especificadas en la opción de \'# Barras \' '
+vLiqVodTT								= 'Actúa como filtro mientras detectas los vacíos de liquidez. Cuando se establece en 0 significa que no se aplica ningún filtrado, al aumentar el valor se hace que el script compruebe el ancho del vacío en comparación con un valor de ATR de longitud fija'
+vLiqVodFT								= 'Alterna la visibilidad de los vacíos de liquidez cubiertos'
 
-groupLiquidFvg							= " ─── Detección de Liquidez (Fvg Void) ─── "
+groupLiquidFvg							= ' DETECCIÓN DE LIQUIDEZ (FVG VOID) '
 
-vLiquidBC								= input.color	(color.new(BrLiYel30, 92),			title = 'Compra',							group = groupLiquidFvg,		inline = 'vColor')
-vLiquidSC								= input.color	(color.new(BrLiYel10, 92),			title = 'Venta',							group = groupLiquidFvg,		inline = 'vColor')
-vLiquidFC								= input.color	(color.new(BrLiYel10, 92),			title = 'Neutral',							group = groupLiquidFvg,		inline = 'vtColor')
-vLiquidFont								= input.color	(color.new(GraySwebDivider, 92),	title = 'Fuente',							group = groupLiquidFvg,		inline = 'vtColor')
+co_LiqVodBC								= input.color	(color.new(BrLiYel30, 92),			title = 'Compra',							group = groupLiquidFvg,			inline = 'vColor')
+co_LiqVodSC								= input.color	(color.new(BrLiYel10, 92),			title = 'Venta',							group = groupLiquidFvg,			inline = 'vColor')
+co_LiqVodFC								= input.color	(color.new(BrLiYel10, 92),			title = 'Neutral',							group = groupLiquidFvg,			inline = 'vtColor')
+co_LiqVodFont							= input.color	(color.new(GraySwebDivider, 92),	title = 'Fuente',							group = groupLiquidFvg,			inline = 'vtColor')
 
 
 /// ＩＮＰＵＴＳ ――――――――――――――――――――――――
 
 
-vLiquidVisual							= input.bool	(defval = true,						title = 'Visualizar FVG',					group = groupLiquidFvg)
-
-vLiquidVF								= input.bool	(defval = true,						title = 'Vacíos de liquidez cubiertos',		group = groupLiquidFvg,		tooltip = vLiquidFT)
-vLiquidTX								= input.bool	(defval = false,					title = 'Etiquetas',						group = groupLiquidFvg)
-optModalidad							= input.string	(defval = 'Historico',				title = 'Modalidad',						group = groupLiquidFvg,		options =['Actual', 'Historico'])
-vLiquidBack								= input.int		(defval = 360,						title = ' # Barras',						group = groupLiquidFvg,		tooltip = tLiquidmdTT,		minval = 100,	maxval = 5000,	step = 10)
-vLiquidTH								= input.float	(defval = 0.5,						title = 'Umbral',							group = groupLiquidFvg,		tooltip = vLiquidTT,		minval = 0, 	maxval = 50,	step = .1)
-
-
-/// ＴＰＳ ―――――――――――――――――――――――――――――
-
-
-// @type		Las propiedades de la barra con sus valores 
-
-// @field h		(float)	precio alto de la barra
-// @field l		(float)	precio bajo de la barra
-// @field c		(float)	precio de cierre de la barra
-// @field o		(float)	precio de apertura de la barra
-// @field i		(int)	índice de la barra
-
-type HLOCIBAR
-	float h = high
-	float l = low
-	float o = open
-	float c = close
-	int   i = bar_index
+vLiqVodVF								= input.bool	(defval = true,						title = 'Vacíos de liquidez cubiertos',		group = groupLiquidFvg,			tooltip = vLiqVodFT)
+vLiqVodTX								= input.bool	(defval = false,					title = 'Etiquetas',						group = groupLiquidFvg)
+optLiqVodMode							= input.string	(defval = 'Historico',				title = 'Modalidad',						group = groupLiquidFvg,			options =['Actual', 'Historico'])
+vLiqVodBack								= input.int		(defval = 360,						title = ' # Barras',						group = groupLiquidFvg,			tooltip = tLiqVodmdTT,		minval = 100,	maxval = 5000,	step = 10)
+vLiqVodTH								= input.float	(defval = 0.5,						title = 'Umbral',							group = groupLiquidFvg,			tooltip = vLiqVodTT,		minval = 0, 	maxval = 50,	step = .1)
 
 
 /// ＦＵＮＣＴＩＯＮＳ ――――――――――――――――――
 
 
-/// ＩＮＳＴＡＮＣＳ ――――――――――――――――――――
-
-
-HLOCIBAR insBvoid = HLOCIBAR.new()
-
-var vLiquidV = array.new_box()
+var vLiqVodV = array.new_box()
 
 
 /// ＣＡＬＣＵＬＡＴＩＯＮＳ ―――――――――――――
 
 
-vLiquidPer	= optModalidad == 'Actual' ? last_bar_index - insBvoid.i <= vLiquidBack : true
-vLiquidAtr	= ta.atr(144) * vLiquidTH
+vLiqVodPer	= optLiqVodMode == 'Actual' ? last_bar_index - gblSource.I <= vLiqVodBack : true
+vLiqVodAtr	= ta.atr(144) * vLiqVodTH
 
-if vLiquidVisual and vLiquidPer
-	fLiquidUp = (insBvoid.l - insBvoid.h[2]) > vLiquidAtr and insBvoid.l > insBvoid.h[2] and insBvoid.c[1] > insBvoid.h[2]
+if display_LiqVodVoid and vLiqVodPer
+	fLiquidUp = (gblSource.L - gblSource.H[2]) > vLiqVodAtr and gblSource.L > gblSource.H[2] and gblSource.C[1] > gblSource.H[2]
 
 	if fLiquidUp 
 		l = 13
 		if fLiquidUp[1] 
-			st = math.abs(insBvoid.l - insBvoid.l[1]) / l
+			st = math.abs(gblSource.L - gblSource.L[1]) / l
 			for i = 0 to l - 1
-				array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.l[1] + (i + 1) * st, insBvoid.i, insBvoid.l[1] + i * st, na, bgcolor = vLiquidBC ))
+				array.push(vLiqVodV, box.new(gblSource.I - 2, gblSource.L[1] + (i + 1) * st, gblSource.I, gblSource.L[1] + i * st, na, bgcolor = co_LiqVodBC ))
 		else   
-			st = math.abs(insBvoid.l - insBvoid.h[2]) / l
+			st = math.abs(gblSource.L - gblSource.H[2]) / l
 			for i = 0 to l - 1
-				if vLiquidTX and i == 0
-					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h[2] + (i + 1) * st, insBvoid.i, insBvoid.h[2] + i * st, na, text = 'Fvg  ', text_size = size.tiny, text_halign = text.align_right, text_valign = text.align_bottom, text_color = vLiquidFont, bgcolor = vLiquidBC ))
+				if vLiqVodTX and i == 0
+					array.push(vLiqVodV, box.new(gblSource.I - 2, gblSource.H[2] + (i + 1) * st, gblSource.I, gblSource.H[2] + i * st, na, text = 'Fvg  ', text_size = size.tiny, text_halign = text.align_right, text_valign = text.align_bottom, text_color = co_LiqVodFont, bgcolor = co_LiqVodBC ))
 				else
-					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h[2] + (i + 1) * st, insBvoid.i, insBvoid.h[2] + i * st, na, bgcolor = vLiquidBC ))
+					array.push(vLiqVodV, box.new(gblSource.I - 2, gblSource.H[2] + (i + 1) * st, gblSource.I, gblSource.H[2] + i * st, na, bgcolor = co_LiqVodBC ))
 
-	fLiquidDown = (insBvoid.l[2] - insBvoid.h) > vLiquidAtr and insBvoid.h < insBvoid.l[2] and insBvoid.c[1] < insBvoid.l[2]
+	fLiquidDown = (gblSource.L[2] - gblSource.H) > vLiqVodAtr and gblSource.H < gblSource.L[2] and gblSource.C[1] < gblSource.L[2]
 
 	if fLiquidDown
 		l = 13
 		if fLiquidDown[1]
-			st = math.abs(insBvoid.h[1] - insBvoid.h) / l
+			st = math.abs(gblSource.H[1] - gblSource.H) / l
 			for i = 0 to l - 1
-				array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h + (i + 1) * st, insBvoid.i, insBvoid.h + i * st, na, bgcolor = vLiquidSC ))
+				array.push(vLiqVodV, box.new(gblSource.I - 2, gblSource.H + (i + 1) * st, gblSource.I, gblSource.H + i * st, na, bgcolor = co_LiqVodSC ))
 		else
-			st = math.abs(insBvoid.l[2] - insBvoid.h) / l
+			st = math.abs(gblSource.L[2] - gblSource.H) / l
 			for i = 0 to l - 1
-				if vLiquidTX and i == l - 1
-					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h + (i + 1) * st, insBvoid.i, insBvoid.h + i * st, na, text = 'Fvg  ', text_size = size.tiny, text_halign = text.align_right, text_valign = text.align_top, text_color = vLiquidFont, bgcolor = vLiquidSC ))
+				if vLiqVodTX and i == l - 1
+					array.push(vLiqVodV, box.new(gblSource.I - 2, gblSource.H + (i + 1) * st, gblSource.I, gblSource.H + i * st, na, text = 'Fvg  ', text_size = size.tiny, text_halign = text.align_right, text_valign = text.align_top, text_color = co_LiqVodFont, bgcolor = co_LiqVodSC ))
 				else
-					array.push(vLiquidV, box.new(insBvoid.i - 2, insBvoid.h + (i + 1) * st, insBvoid.i, insBvoid.h + i * st, na, bgcolor = vLiquidSC ))
+					array.push(vLiqVodV, box.new(gblSource.I - 2, gblSource.H + (i + 1) * st, gblSource.I, gblSource.H + i * st, na, bgcolor = co_LiqVodSC ))
 
-if vLiquidVisual and vLiquidV.size() > 0
-	vLiquidFuQT = vLiquidV.size()
+if display_LiqVodVoid and vLiqVodV.size() > 0
+	vLiqVodFuQT = vLiqVodV.size()
 
-	for vLiqVIfbn = vLiquidFuQT - 1 to 0
-		if vLiqVIfbn < vLiquidV.size()
-			vLiqVFuCB = vLiquidV.get(vLiqVIfbn)
+	for vLiqVIfbn = vLiqVodFuQT - 1 to 0
+		if vLiqVIfbn < vLiqVodV.size()
+			vLiqVFuCB = vLiqVodV.get(vLiqVIfbn)
 			vLiqVFutBX = vLiqVFuCB.get_top()
 			vLiqVFubBX = vLiqVFuCB.get_bottom()
-			if insBvoid.h > vLiqVFubBX and insBvoid.l < vLiqVFutBX
-				if vLiquidVF
-					vLiqVFuCB.set_bgcolor(vLiquidFC)
+			if gblSource.H > vLiqVFubBX and gblSource.L < vLiqVFutBX
+				if vLiqVodVF
+					vLiqVFuCB.set_bgcolor(co_LiqVodFC)
 				else
 					vLiqVFuCB.delete()
-				vLiquidV.remove(vLiqVIfbn)
+				vLiqVodV.remove(vLiqVIfbn)
 			else
-				vLiqVFuCB.set_right(insBvoid.i + 1)
+				vLiqVFuCB.set_right(gblSource.I + 1)
 
-				if insBvoid.i - vLiqVFuCB.get_left() > 21
+				if gblSource.I - vLiqVFuCB.get_left() > 21
 					vLiqVFuCB.set_text_color(chart.fg_color)
 
-	if vLiquidV.size() > 500
-		vLiquidV.shift()
+	if vLiqVodV.size() > 500
+		vLiqVodV.shift()
 
 
 /// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -236,9 +299,10 @@ if vLiquidVisual and vLiquidV.size() > 0
 /// ＩＮＰＵＴＳ ――――――――――――――――――――――――
 
 
-var ofImbgrpImbalance					= " ─── Visualización OrderFlow Imbalance ─── "
-ofImbVaradboxcountimbalance				= input.int		(defval = 50,				title = "Rango de Visualización",	inline = "imbgl",		group = ofImbgrpImbalance)
-ofImbVarboxcolorimbalance				= input.color	(color.new(BrLiYel10, 94),	title = "Color",					inline = "imbgl",		group = ofImbgrpImbalance)
+var ofImbgrpImbalance					= ' VISUALIZACIÓN ORDERFLOW IMBALANCE '
+
+vOfImbVarImbal							= input.int		(defval = 50,				title = 'Rango de Visualización',					group = ofImbgrpImbalance,		inline = 'imbgl')
+co_OfImbVarImbal						= input.color	(color.new(BrLiYel10, 94),	title = 'Color',									group = ofImbgrpImbalance,		inline = 'imbgl')
 
 
 /// ＣＡＬＣＵＬＡＴＩＯＮＳ ―――――――――――――
@@ -246,10 +310,10 @@ ofImbVarboxcolorimbalance				= input.color	(color.new(BrLiYel10, 94),	title = "C
 
 var box[] ofImbArrofImFuimbboxarray		= array.new_box()
 
-ofImbVartopimbalance					= low[2] <= open[1] and high[0] >= close[1]
-ofImbVartopimbalancesize				= low[2] - high[0]
-ofImbVarbottomimbalance					= high[2] >= open[1] and low[0] <= close[1]
-ofImbVarbottomimbalancesize				= low[0] - high[2]
+ofImbVartopimbalance					= gblSource.L[2] <= gblSource.O[1] and gblSource.H[0] >= gblSource.C[1]
+ofImbVartopimbalancesize				= gblSource.L[2] - gblSource.H[0]
+ofImbVarbottomimbalance					= gblSource.H[2] >= gblSource.O[1] and gblSource.L[0] <= gblSource.C[1]
+ofImbVarbottomimbalancesize				= gblSource.L[0] - gblSource.H[2]
 
 
 /// ＦＵＮＣＴＩＯＮＳ ――――――――――――――――――
@@ -262,7 +326,7 @@ ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray) =>
 			ofImFuboxhighzone			= box.get_top(ofImFucutbox)
 			ofImFuboxlowzone			= box.get_bottom(ofImFucutbox)
 			ofImFuboxrightzone			= box.get_right(ofImFucutbox)
-			if na or bar_index - 1 == ofImFuboxrightzone and not(high > ofImFuboxlowzone and low < ofImFuboxlowzone or high > ofImFuboxhighzone and low < ofImFuboxhighzone)
+			if na or bar_index - 1 == ofImFuboxrightzone and not(gblSource.H > ofImFuboxlowzone and gblSource.L < ofImFuboxlowzone or gblSource.H > ofImFuboxhighzone and gblSource.L < ofImFuboxhighzone)
 				box.set_right(array.get(ofImbArrofImFuimbboxarray, i), bar_index)
 
 
@@ -270,10 +334,10 @@ ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray) =>
 
 
 if ofImbVartopimbalance and ofImbVartopimbalancesize > 0 or ofImbVarbottomimbalance and ofImbVarbottomimbalancesize > 0
-	ofImFuboxhighzone					= ofImbVartopimbalance and ofImbVartopimbalancesize > 0 ? low[2] : low[0]
-	ofImFuboxlowzone					= ofImbVartopimbalance and ofImbVartopimbalancesize > 0 ? high[0] : high[2]
-	ofImFuimbbox						= box.new(bar_index, ofImFuboxhighzone, bar_index, ofImFuboxlowzone, ofImbVarboxcolorimbalance, border_style = line.style_dashed, bgcolor = ofImbVarboxcolorimbalance)
-	if array.size(ofImbArrofImFuimbboxarray) > ofImbVaradboxcountimbalance
+	ofImFuboxhighzone					= ofImbVartopimbalance and ofImbVartopimbalancesize > 0 ? gblSource.L[2] : gblSource.L[0]
+	ofImFuboxlowzone					= ofImbVartopimbalance and ofImbVartopimbalancesize > 0 ? gblSource.H[0] : gblSource.H[2]
+	ofImFuimbbox						= box.new(bar_index, ofImFuboxhighzone, bar_index, ofImFuboxlowzone, co_OfImbVarImbal, border_style = line.style_dashed, bgcolor = co_OfImbVarImbal)
+	if array.size(ofImbArrofImFuimbboxarray) > vOfImbVarImbal
 		box.delete(array.shift(ofImbArrofImFuimbboxarray))
 	array.push(ofImbArrofImFuimbboxarray, ofImFuimbbox)
 
@@ -293,11 +357,12 @@ ofImbFunction_choppedoffimb(ofImbArrofImFuimbboxarray)
 /// ＩＮＰＵＴＳ ――――――――――――――――――――――――
 
 
-smcLiGroupSett							= ' ─── Configuración SMC Lite ─── '
+smcLiGroupSett							= ' CONFIGURACIÓN SMC LITE '
+
 smcLiGroupShow							= 'Visualización SMC Lite'
 
 /// ─── Visualización
-smcLiVarShowZigzag						= input.bool	(false,								title = 'Mostrar Zig Zag         ',			group = smcLiGroupShow,			inline = '1')
+smcLiVarShowZigzag						= input.bool	(false,								title = 'Mostrar Zig Zag        ',			group = smcLiGroupShow,			inline = '1')
 smcLiVarShowPriceActionLabels			= input.bool	(false,								title = 'Mostrar Price Action',				group = smcLiGroupShow,			inline = '2')
 
 smcLiColorZigZag						= input.color	(color.new(BrLiYel40, 40),			title = '   Linea ',						group = smcLiGroupShow,			inline = '1')
@@ -521,8 +586,8 @@ smcLiVarFunctionExtendBoxEndpoint(smLiFuBoxArray) =>
 smLiFuATR								= ta.atr(50)
 
 /// ─── Calculate swing highs & swing lows
-smLiVarSwingHigh						= ta.pivothigh(high, smcLiVarSwingLength, smcLiVarSwingLength)
-smcLiVarSwingLow						= ta.pivotlow(low, smcLiVarSwingLength, smcLiVarSwingLength)
+smLiVarSwingHigh						= ta.pivothigh(gblSource.H, smcLiVarSwingLength, smcLiVarSwingLength)
+smcLiVarSwingLow						= ta.pivotlow(gblSource.L, smcLiVarSwingLength, smcLiVarSwingLength)
 
 /// ─── Arrays for swing h/l & bn 
 var smcLiVarSwingHighValues 			= array.new_float(5,0.00)
@@ -575,15 +640,15 @@ smcLiVarFunctionExtendBoxEndpoint(smcLiVarCurrentSupplyBox)
 smcLiVarFunctionExtendBoxEndpoint(smcLiVarCurrentDemandBox)
 
 /// ─── ZIG ZAG
-smcLiVarHighest							= ta.highest(high, smcLiVarSwingLength * 2 + 1)
-smcLiVarLowest							= ta.lowest(low, smcLiVarSwingLength * 2 + 1)
+smcLiVarHighest							= ta.highest(gblSource.H,	smcLiVarSwingLength * 2 + 1)
+smcLiVarLowest							= ta.lowest(gblSource.L,	smcLiVarSwingLength * 2 + 1)
 f_isMin(len) =>
-	smcLiVarLowest == low[len]
+	smcLiVarLowest == gblSource.L[len]
 f_isMax(len) =>
-	smcLiVarHighest == high[len]
+	smcLiVarHighest == gblSource.H[len]
 
 var smcLiVarDirUp						= false
-var smcLiVarLastLow						= high * 100
+var smcLiVarLastLow						= gblSource.H * 100
 var smcLiVarLastHigh					= 0.0
 var smcLiVarTimeLow						= bar_index
 var smcLiVarTimeHigh					= bar_index
@@ -596,34 +661,34 @@ smcLiVarFunctionDrawLine() =>
 	line.new(smcLiVarTimeHigh - smcLiVarSwingLength, smcLiVarLastHigh, smcLiVarTimeLow - smcLiVarSwingLength, smcLiVarLastLow, xloc.bar_index, color = smcLiColorLine, width = 2)
 
 if smcLiVarDirUp
-	if f_isMin(smcLiVarSwingLength) and low[smcLiVarSwingLength] < smcLiVarLastLow
-		smcLiVarLastLow					:= low[smcLiVarSwingLength]
+	if f_isMin(smcLiVarSwingLength) and gblSource.L[smcLiVarSwingLength] < smcLiVarLastLow
+		smcLiVarLastLow					:= gblSource.L[smcLiVarSwingLength]
 		smcLiVarTimeLow					:= bar_index
 		line.delete(smcLiVarLI)
 		smcLiVarLI						:= smcLiVarFunctionDrawLine()
 		smcLiVarLI
 
-	if f_isMax(smcLiVarSwingLength) and high[smcLiVarSwingLength] > smcLiVarLastLow
-		smcLiVarLastHigh				:= high[smcLiVarSwingLength]
+	if f_isMax(smcLiVarSwingLength) and gblSource.H[smcLiVarSwingLength] > smcLiVarLastLow
+		smcLiVarLastHigh				:= gblSource.H[smcLiVarSwingLength]
 		smcLiVarTimeHigh				:= bar_index
 		smcLiVarDirUp					:= false
 		smcLiVarLI						:= smcLiVarFunctionDrawLine()
 		smcLiVarLI
 
 if not smcLiVarDirUp
-	if f_isMax(smcLiVarSwingLength) and high[smcLiVarSwingLength] > smcLiVarLastHigh
-		smcLiVarLastHigh				:= high[smcLiVarSwingLength]
+	if f_isMax(smcLiVarSwingLength) and gblSource.H[smcLiVarSwingLength] > smcLiVarLastHigh
+		smcLiVarLastHigh				:= gblSource.H[smcLiVarSwingLength]
 		smcLiVarTimeHigh				:= bar_index
 		line.delete(smcLiVarLI)
 		smcLiVarLI						:= smcLiVarFunctionDrawLine()
 		smcLiVarLI
-	if f_isMin(smcLiVarSwingLength) and low[smcLiVarSwingLength] < smcLiVarLastHigh
-		smcLiVarLastLow					:= low[smcLiVarSwingLength]
+	if f_isMin(smcLiVarSwingLength) and gblSource.L[smcLiVarSwingLength] < smcLiVarLastHigh
+		smcLiVarLastLow					:= gblSource.L[smcLiVarSwingLength]
 		smcLiVarTimeLow					:= bar_index
 		smcLiVarDirUp					:= true
 		smcLiVarLI						:= smcLiVarFunctionDrawLine()
-		if f_isMax(smcLiVarSwingLength) and high[smcLiVarSwingLength] > smcLiVarLastLow
-			smcLiVarLastHigh			:= high[smcLiVarSwingLength]
+		if f_isMax(smcLiVarSwingLength) and gblSource.H[smcLiVarSwingLength] > smcLiVarLastLow
+			smcLiVarLastHigh			:= gblSource.H[smcLiVarSwingLength]
 			smcLiVarTimeHigh			:= bar_index
 			smcLiVarDirUp				:= false
 			smcLiVarLI					:= smcLiVarFunctionDrawLine()
@@ -643,27 +708,29 @@ if not smcLiVarDirUp
 /// ＩＮＰＵＴＳ ――――――――――――――――――――――――
 
 
-MSGGroup								= " ─── Smart Money Concept Belu & ESTRUCTURA DEL MERCADO ─── "
-VBGGroup								= "ORDER BLOCKS VOLUMÉTRICO"
-VFvgGroup								= "FAIR VALUE GAP"
-VSwingGroup								= "PATRÓN de QUIEBRE de SWING"
-VLiqCoGroup								= "LIQUIDITY CONCEPTS"
+MSGGroup								= ' SMART MONEY CONCEPT & ESTRUCTURA DEL MERCADO '
 
-IDT										= "[Entrada] Fecha de inicio de la estructura interna"
+VBGGroup								= 'ORDER BLOCKS VOLUMÉTRICO'
+VFvgGroup								= 'FAIR VALUE GAP'
+VSwingGroup								= 'PATRÓN de QUIEBRE de SWING'
+VLiqCoGroup								= 'LIQUIDITY CONCEPTS'
 
-OBTTool									= "Mostrar actividad interna de compra y venta"
-OBDTool									= "Mostrar el último número del orderblock"
-OBMTool									= "[Longitud] Use la longitud para ajustar la cordinación de los bloques de pedidos\n[Completo] Usar todo el cuerpo de la vela"
+IDT										= '[Entrada] Fecha de inicio de la estructura interna'
 
-MsWinTool								= "Cálculo de la estructura de mercado SWING para mejorar el tiempo de velocidad de la memoria"
-SwingLimTool							= "[ENTRADA] Limitar la estructura SWING a las barras traseras"
-MapStyTool								= "Mostrar estructura de mapeo"
-CandLecTool								= "Vela de color basada en un sistema de detección de tendencias"
-ShowHLTool								= "Mostrar Volumétrica Fuerte/Débil Alta/Baja"
-BuildSwTool								= "Construir un barrido en la estructura del mercado"
-FvgSrcTool								= "[Cerrar] Usar el cierre del cuerpo como disparador\n\n[Mecha] Usar el punto extremo del cuerpo como disparador"
-OBMitiTool								= "Método de mitigación para cuándo activar order blocks"
-DevCssTool								= "Mostrar proyección de desviación SFP"
+OBTTool									= 'Mostrar actividad interna de compra y venta'
+OBDTool									= 'Mostrar el último número del orderblock'
+OBMTool									= '[Longitud] Use la longitud para ajustar la cordinación de los bloques de pedidos\n[Completo] Usar todo el cuerpo de la vela'
+
+MsWinTool								= 'Cálculo de la estructura de mercado SWING para mejorar el tiempo de velocidad de la memoria'
+SwingLimTool							= '[ENTRADA] Limitar la estructura SWING a las barras traseras'
+MapStyTool								= 'Mostrar estructura de mapeo'
+CandLecTool								= 'Vela de color basada en un sistema de detección de tendencias'
+ShowHLTool								= 'Mostrar Volumétrica Fuerte/Débil Alta/Baja'
+BuildSwTool								= 'Construir un barrido en la estructura del mercado'
+FvgSrcTool								= '[Cerrar] Usar el cierre del cuerpo como disparador\n\n[Mecha] Usar el punto extremo del cuerpo como disparador'
+OBMitiTool								= 'Método de mitigación para cuándo activar order blocks'
+DevCssTool								= 'Mostrar proyección de desviación SFP'
+SweepATool								= 'Sweep Area'
 
 SmcBeColorInUp							= AllenMint60
 SmcBeColorInDn							= AllenSky10
@@ -687,108 +754,107 @@ SmcBeColorYell							= BrLiYel40
 SmcBeColorBlue							= ARoPrimary
 
 
-bool windowsis							= input.bool	(true,								title = "Segmento",							inline = "kla",		group = MSGGroup)
-int mswindow							= input.int		(5000,								title = "",									inline = "kla",		group = MSGGroup,		minval = 1000,	tooltip = MsWinTool)
-bool showSwing							= input.bool	(true,								title = "Quiebres",							inline = "scss",	group = MSGGroup)
-int swingLimit							= input.int		(100,								title = "",									inline = "scss",	group = MSGGroup,		minval = 10,	maxval = 200,	tooltip = SwingLimTool)
-color swingcssup						= input.color	(color.new(SmcBeColorInUp, 50),		title = "",									inline = "scss",	group = MSGGroup)
-color swingcssdn						= input.color	(color.new(SmcBeColorInDn, 50),		title = "",									inline = "scss",	group = MSGGroup)
+bool windowsis							= input.bool	(defval = true,						title = 'Segmento',							inline = 'kla',		group = MSGGroup)
+int mswindow							= input.int		(defval = 5000,						title = '',									inline = 'kla',		group = MSGGroup,		minval = 1000,	tooltip = MsWinTool)
+bool showSwing							= input.bool	(defval = true,						title = 'Quiebres',							inline = 'scss',	group = MSGGroup)
+int swingLimit							= input.int		(defval = 100,						title = '',									inline = 'scss',	group = MSGGroup,		minval = 10,	maxval = 200,	tooltip = SwingLimTool)
+color swingcssup						= input.color	(color.new(SmcBeColorInUp, 50),		title = '',									inline = 'scss',	group = MSGGroup)
+color swingcssdn						= input.color	(color.new(SmcBeColorInDn, 50),		title = '',									inline = 'scss',	group = MSGGroup)
 
-bool showMapping						= input.bool	(false,								title = "Mapeo de estructura",				inline = "mapping",	group = MSGGroup)
-string mappingStyle						= input.string	("····",							title = "",									inline = "mapping",	group = MSGGroup,
-	  options							=				["⎯⎯⎯⎯", "----", "····"])
-color mappingcss						= input.color	(color.new(SmcBeColorMapEs, 40),	title = "",									inline = "mapping",	group = MSGGroup,						tooltip = MapStyTool)
-bool candlecss							= input.bool	(false,								title = "Barras de Color",					inline = "txt",		group = MSGGroup,						tooltip = CandLecTool)
-string mstext							= input.string	("Tiny",							title = "",									inline = "txt",		group = MSGGroup,
-	  options							=				["Tiny", "Small", "Normal", "Large", "Huge"])
-string msmode							= input.string	("Puntos estrechos",				title = "Lógica algorítmica",				inline = "node",	group = MSGGroup,
-	  options							=				["Puntos estremos", "Puntos estrechos"])
-int mslen								= input.int		(defval = 5,						title = "",									inline = "node",	group = MSGGroup,		minval = 2)
+bool showMapping						= input.bool	(defval = false,					title = 'Mapeo de estructura',				inline = 'mapping',	group = MSGGroup)
+string mappingStyle						= input.string	(defval = '····',					title = '',									inline = 'mapping',	group = MSGGroup,
+	  options							=				['⎯⎯⎯⎯', '----', '····'])
+color mappingcss						= input.color	(color.new(SmcBeColorMapEs, 40),	title = '',									inline = 'mapping',	group = MSGGroup,						tooltip = MapStyTool)
+bool candlecss							= input.bool	(defval = false,					title = 'Barras de Color',					inline = 'txt',		group = MSGGroup,						tooltip = CandLecTool)
+string mstext							= input.string	(defval = 'Mini',					title = '',									inline = 'txt',		group = MSGGroup,
+	  options							=				['Mini', 'Pequeño', 'Normal', 'Grande', 'Enorme', 'Auto'])
+string msmode							= input.string	(defval = 'Puntos estrechos',		title = 'Lógica algorítmica',				inline = 'node',	group = MSGGroup,
+	  options							=				['Puntos estremos', 'Puntos estrechos'])
+int mslen								= input.int		(defval = 5,						title = '',									inline = 'node',	group = MSGGroup,		minval = 2)
 
-bool showhl								= input.bool	(true,								title = "Fuerte/Débil HL",					inline = "hl",		group = MSGGroup,						tooltip = ShowHLTool)
-bool buildsweep							= input.bool	(false,								title = "Mostrar Sweep (x)",				inline = "znc",		group = MSGGroup,						tooltip = BuildSwTool)
-bool msbubble							= input.bool	(true,								title = "Burbujas",							inline = "bubbles", group = MSGGroup)
+bool showhl								= input.bool	(defval = true,						title = 'Fuerte/Débil HL',					inline = 'hl',		group = MSGGroup,						tooltip = ShowHLTool)
+bool buildsweep							= input.bool	(defval = false,					title = 'Mostrar Sweep (x)',				inline = 'znc',		group = MSGGroup,						tooltip = BuildSwTool)
+bool msbubble							= input.bool	(defval = true,						title = 'Burbujas',							inline = 'bubbles', group = MSGGroup)
 
-bool obshow								= input.bool	(true,								title = "Mostrar ultimos",					inline = "obshow",	group = VBGGroup,						tooltip = OBDTool)
-int oblast								= input.int		(defval = 5,						title = "",									inline = "obshow",	group = VBGGroup,		minval = 0)
-color obupcs							= input.color	(color.new(SmcBeColorInUp, 90),		title = "",									inline = "obshow",	group = VBGGroup)
-color obdncs							= input.color	(color.new(SmcBeColorInDn, 90),		title = "",									inline = "obshow",	group = VBGGroup)
-bool obshowactivity						= input.bool	(false,								title = "Mostrar actividad de Compra/Venta",inline = "act",		group = VBGGroup,						tooltip = OBTTool)
-color obactup							= input.color	(color.new(SmcBeColorInUp, 75),		title = "",									inline = "act",		group = VBGGroup)
-color obactdn							= input.color	(color.new(SmcBeColorInDn, 75),		title = "",									inline = "act",		group = VBGGroup)
+bool obshow								= input.bool	(defval = true,						title = 'Mostrar ultimos',					inline = 'obshow',	group = VBGGroup,						tooltip = OBDTool)
+int oblast								= input.int		(defval = 5,						title = '',									inline = 'obshow',	group = VBGGroup,		minval = 0)
+color obupcs							= input.color	(color.new(SmcBeColorInUp, 90),		title = '',									inline = 'obshow',	group = VBGGroup)
+color obdncs							= input.color	(color.new(SmcBeColorInDn, 90),		title = '',									inline = 'obshow',	group = VBGGroup)
+bool obshowactivity						= input.bool	(defval = false,					title = 'Mostrar actividad de Compra/Venta',inline = 'act',		group = VBGGroup,						tooltip = OBTTool)
+color obactup							= input.color	(color.new(SmcBeColorInUp, 75),		title = '',									inline = 'act',		group = VBGGroup)
+color obactdn							= input.color	(color.new(SmcBeColorInDn, 75),		title = '',									inline = 'act',		group = VBGGroup)
 
-obshowbb								= input.bool	(true,								title = "Mostrar Breakers",					inline = "bb",		group = VBGGroup)
-color bbup								= input.color	(color.new(SmcBeColorBreakUp, 88),	title = "",									inline = "bb",		group = VBGGroup)
-color bbdn								= input.color	(color.new(SmcBeColorBreakDn, 88),	title = "",									inline = "bb",		group = VBGGroup)
-obmode									= input.string	("Longitud",						title = "Contrucción",						inline = "atr",		group = VBGGroup,
-	  options							=				["Longitud", "Full"],
+obshowbb								= input.bool	(defval = true,						title = 'Mostrar Breakers',					inline = 'bb',		group = VBGGroup)
+color bbup								= input.color	(color.new(SmcBeColorBreakUp, 88),	title = '',									inline = 'bb',		group = VBGGroup)
+color bbdn								= input.color	(color.new(SmcBeColorBreakDn, 88),	title = '',									inline = 'bb',		group = VBGGroup)
+obmode									= input.string	(defval = 'Longitud',				title = 'Contrucción',						inline = 'atr',		group = VBGGroup,
+	  options							=				['Longitud', 'Full'],
 	  tooltip							= OBMTool)
-len										= input.int		(5,									title = "",									inline = "atr",		group = VBGGroup,		minval = 1)
-obmiti									= input.string	("Cierre",							title = "Metodo de Mitigación",									group = VBGGroup,	
-	  options							=				["Cierre", "Mecha", "Avg"],
+len										= input.int		(defval = 5,						title = '',									inline = 'atr',		group = VBGGroup,		minval = 1)
+obmiti									= input.string	(defval = 'Cierre',					title = 'Metodo de Mitigación',									group = VBGGroup,	
+	  options							=				['Cierre', 'Mecha', 'Avg'],
 	  tooltip							= OBMitiTool)
-obtxt									= input.string	("Small",							title = "Tamaño Metrica",					inline = "txt",		group = VBGGroup,
-	  options							=				["Tiny", "Small", "Normal", "Large", "Huge", "Auto"])
+obtxt									= input.string	(defval = 'Pequeño',					title = 'Tamaño Metrica',					inline = 'txt',		group = VBGGroup,
+	  options							=				['Mini', 'Pequeño', 'Normal', 'Grande', 'Enorme', 'Auto'])
+showmetric								= input.bool	(defval = true,						title = 'Mostrar Metricas',										group = VBGGroup)
+showline								= input.bool	(defval = true,						title = 'Mostrar Linea media',									group = VBGGroup)
+overlap									= input.bool	(defval = false,					title = 'Ocultar superposición',			inline = 'ov',		group = VBGGroup)
+wichlap									= input.string	(defval = 'Reciente',				title = '',									inline = 'ov',		group = VBGGroup,
+	  options							=				['Reciente', 'Antiguo'])
 
-showmetric								= input.bool	(true,								title = "Mostrar Metricas",										group = VBGGroup)
-showline								= input.bool	(true,								title = "Mostrar Linea media",									group = VBGGroup)
-overlap									= input.bool	(false,								title = "Ocultar superposición",			inline = "ov",		group = VBGGroup)
-wichlap									= input.string	("Reciente",						title = "",									inline = "ov",		group = VBGGroup,
-	  options							=				["Reciente", "Antiguo"])
-
-fvg_enable								= input.bool	(true,								title = "",									inline = "1",		group = VFvgGroup)
-what_fvg								= input.string	("FVG",								title = "",									inline = "1",		group = VFvgGroup, 
-	  options							=				["FVG", "Breakers"])
-fvg_num									= input.int(5,										title = "Mostrar ultimos",					inline = "1a",		group = VFvgGroup,		minval = 0)
-fvg_upcss								= input.color	(color.new(SmcBeColorFvgUp, 88),	title = "",									inline = "1",		group = VFvgGroup)
-fvg_dncss								= input.color	(color.new(SmcBeColorFvgDn, 90),	title = "",									inline = "1",		group = VFvgGroup)
-fvgbbup									= input.color	(color.new(SmcBeColorFvgUp, 90),	title = "",									inline = "1",		group = VFvgGroup)
-fvgbbdn									= input.color	(color.new(SmcBeColorFvgDn, 92),	title = "",									inline = "1",		group = VFvgGroup)
-fvg_src									= input.string	("Cierre",							title = "Mitigación",						inline = "3",		group = VFvgGroup, 
-	  options							=				["Cierre", "Mecha", "Avg"],
+fvg_enable								= input.bool	(defval = true,						title = '',									inline = '1',		group = VFvgGroup)
+what_fvg								= input.string	(defval = 'FVG',					title = '',									inline = '1',		group = VFvgGroup, 
+	  options							=				['FVG', 'Breakers'])
+fvg_num									= input.int(5,										title = 'Mostrar ultimos',					inline = '1a',		group = VFvgGroup,		minval = 0)
+fvg_upcss								= input.color	(color.new(SmcBeColorFvgUp, 88),	title = '',									inline = '1',		group = VFvgGroup)
+fvg_dncss								= input.color	(color.new(SmcBeColorFvgDn, 90),	title = '',									inline = '1',		group = VFvgGroup)
+fvgbbup									= input.color	(color.new(SmcBeColorFvgUp, 90),	title = '',									inline = '1',		group = VFvgGroup)
+fvgbbdn									= input.color	(color.new(SmcBeColorFvgDn, 92),	title = '',									inline = '1',		group = VFvgGroup)
+fvg_src									= input.string	(defval = 'Cierre',					title = 'Mitigación',						inline = '3',		group = VFvgGroup, 
+	  options							=				['Cierre', 'Mecha', 'Avg'],
 	  tooltip							= FvgSrcTool) 
-fvgthresh								= input.float	(0, 								title = "Umbral",							inline = "asd",		group = VFvgGroup,		minval = 0,		maxval = 2,	step = 0.1)
-fvgoverlap								= input.bool	(true,								title = "Ocultar superposición",								group = VFvgGroup)
-fvgline									= input.bool	(false,								title = "Mostrar Linea media",									group = VFvgGroup)
-fvgextend								= input.bool	(false,								title = "Extender FVG",											group = VFvgGroup)
-dispraid								= input.bool	(true,								title = "Mostrar Raids",					inline = "raid",	group = VFvgGroup)
+fvgthresh								= input.float	(defval = 0, 						title = 'Umbral',							inline = 'asd',		group = VFvgGroup,		minval = 0,		maxval = 2,	step = 0.1)
+fvgoverlap								= input.bool	(defval = true,						title = 'Ocultar superposición',								group = VFvgGroup)
+fvgline									= input.bool	(defval = false,					title = 'Mostrar Linea media',									group = VFvgGroup)
+fvgextend								= input.bool	(defval = false,					title = 'Extender FVG',											group = VFvgGroup)
+dispraid								= input.bool	(defval = true,						title = 'Mostrar Raids',					inline = 'raid',	group = VFvgGroup)
 
-dispSFP									= input.bool	(true,								title = "Mostrar ultimos",					inline = "sfp",		group = VSwingGroup)
-sfpshow									= input.int		(5,									title = "",									inline = "sfp",		group = VSwingGroup,	minval = 0)
-showdev									= input.bool	(true,								title = "Area de desviación",				inline = "dev",		group = VSwingGroup)
-brsfpcs									= input.color	(color.new(SmcBeColorDSwing, 65),	title = "",									inline = "sfp",		group = VSwingGroup)
-blsfpcs									= input.color	(color.new(SmcBeColorDSwing, 55),	title = "",									inline = "sfp",		group = VSwingGroup)
-spfuselen								= input.bool	(true,								title = "Longitud",							inline = "sfx",		group = VSwingGroup)
-sfplen									= input.int		(5,									title = "",									inline = "sfx",		group = VSwingGroup,	minval = 0)
-sfpfilter								= input.string	("Counter Trade",					title = "Filtrado",							inline = "sfp1",	group = VSwingGroup,
-	  options							=				["None", "Trend Following", "Counter Trade"])
-sfpthresh								= input.float	(1,									title = "Umbral",							inline = "sfp2",	group = VSwingGroup,	minval = 0.1,	maxval = 2,	step = 0.1)
-devstyle								= input.string	("⎯⎯⎯⎯",							title = "",									inline = "dev",		group = VSwingGroup,
-	  options							=				["⎯⎯⎯⎯", "----", "····"])
-devcss									= input.color	(color.new(SmcBeColorDSwing, 50),	title = "",									inline = "dev",		group = VSwingGroup,
+dispSFP									= input.bool	(defval = true,						title = 'Mostrar ultimos',					inline = 'sfp',		group = VSwingGroup)
+sfpshow									= input.int		(defval = 5,						title = '',									inline = 'sfp',		group = VSwingGroup,	minval = 0)
+showdev									= input.bool	(defval = true,						title = 'Area de desviación',				inline = 'dev',		group = VSwingGroup)
+brsfpcs									= input.color	(color.new(SmcBeColorDSwing, 65),	title = '',									inline = 'sfp',		group = VSwingGroup)
+blsfpcs									= input.color	(color.new(SmcBeColorDSwing, 55),	title = '',									inline = 'sfp',		group = VSwingGroup)
+spfuselen								= input.bool	(defval = true,						title = 'Longitud',							inline = 'sfx',		group = VSwingGroup)
+sfplen									= input.int		(defval = 5,						title = '',									inline = 'sfx',		group = VSwingGroup,	minval = 0)
+sfpfilter								= input.string	(defval = 'Counter Trade',			title = 'Filtrado',							inline = 'sfp1',	group = VSwingGroup,
+	  options							=				['None', 'Trend Following', 'Counter Trade'])
+sfpthresh								= input.float	(defval = 1,						title = 'Umbral',							inline = 'sfp2',	group = VSwingGroup,	minval = 0.1,	maxval = 2,	step = 0.1)
+devstyle								= input.string	(defval = '⎯⎯⎯⎯',					title = '',									inline = 'dev',		group = VSwingGroup,
+	  options							=				['⎯⎯⎯⎯', '----', '····'])
+devcss									= input.color	(color.new(SmcBeColorDSwing, 50),	title = '',									inline = 'dev',		group = VSwingGroup,
 	  tooltip							= DevCssTool)
-devsize									= input.string	("Small",							title = "Tamaño de texto",					inline = "ak",		group = VSwingGroup,
-	  options							=				["Tiny", "Small", "Normal", "Large", "Huge", "Auto"],
-	  tooltip							= 				"Text Size")
-devlvl									= input.bool	(true,								title = "Mostrar Nivel",										group = VSwingGroup)
-devfill									= input.bool	(true,								title = "Rellenar area",										group = VSwingGroup)
-ehlshow									= input.bool	(true,								title = "Equal H&L",						inline = "ehl",		group = VLiqCoGroup)
-ehlmode									= input.string	("Short-Term",						title = "",									inline = "ehl",		group = VLiqCoGroup,
-	  options							=				["Short-Term", "Mid-Term", "Long-Term"])
-ehldowncs								= input.color	(color.new(SmcBeColorLiUp, 75),		title = "",									inline = "ehl",		group = VLiqCoGroup)
-ehlupcs									= input.color	(color.new(SmcBeColorLiUp, 75),		title = "",									inline = "ehl",		group = VLiqCoGroup)
-liqprint								= input.bool	(true,								title = "Impresiones de liquidez",			inline = "print",	group = VLiqCoGroup)
-printupcs								= input.color	(color.new(SmcBeColorYell, 10),		title = "",									inline = "print",	group = VLiqCoGroup)
-printdowncs								= input.color	(color.new(SmcBeColorBlue, 10),		title = "",									inline = "print",	group = VLiqCoGroup)
-showside								= input.bool	(true,								title = "Buyside & Sellside", 				inline = "side",	group = VLiqCoGroup)
-sidemode								= input.string	("Area",							title = "",									inline = "side",	group = VLiqCoGroup,
-	  options							=				["Area", "Line"])
-buysidecss								= input.color	(color.new(SmcBeColorLiUp, 76),		title = "",									inline = "side",	group = VLiqCoGroup)
-sidesidecss								= input.color	(color.new(SmcBeColorLiDn, 76),		title = "",									inline = "side",	group = VLiqCoGroup)
-showzone								= input.bool	(true, "Sweep Area",				title = "Zona de liquidación Sweep",		inline = "sz",		group = VLiqCoGroup)
-zonethresh								= input.int		(10,								title = "",									inline = "sz",		group = VLiqCoGroup,	minval = 2)
-upzone									= input.color	(color.new(SmcBeColorInUp, 60),		title = "",									inline = "sz",		group = VLiqCoGroup)
-dnzone									= input.color	(color.new(SmcBeColorInDn, 60),		title = "",									inline = "sz",		group = VLiqCoGroup)
+devsize									= input.string	(defval = 'Pequeño',					title = 'Tamaño de texto',					inline = 'ak',		group = VSwingGroup,
+	  options							=				['Mini', 'Pequeño', 'Normal', 'Grande', 'Enorme', 'Auto'],
+	  tooltip							= 				'Text Size')
+devlvl									= input.bool	(defval = true,						title = 'Mostrar Nivel',										group = VSwingGroup)
+devfill									= input.bool	(defval = true,						title = 'Rellenar area',										group = VSwingGroup)
+ehlshow									= input.bool	(defval = true,						title = 'Equal H&L',						inline = 'ehl',		group = VLiqCoGroup)
+ehlmode									= input.string	(defval = 'Short-Term',				title = '',									inline = 'ehl',		group = VLiqCoGroup,
+	  options							=				['Short-Term', 'Mid-Term', 'Long-Term'])
+ehldowncs								= input.color	(color.new(SmcBeColorLiUp, 75),		title = '',									inline = 'ehl',		group = VLiqCoGroup)
+ehlupcs									= input.color	(color.new(SmcBeColorLiUp, 75),		title = '',									inline = 'ehl',		group = VLiqCoGroup)
+liqprint								= input.bool	(defval = true,						title = 'Impresiones de liquidez',			inline = 'print',	group = VLiqCoGroup)
+printupcs								= input.color	(color.new(SmcBeColorYell, 10),		title = '',									inline = 'print',	group = VLiqCoGroup)
+printdowncs								= input.color	(color.new(SmcBeColorBlue, 10),		title = '',									inline = 'print',	group = VLiqCoGroup)
+showside								= input.bool	(defval = true,						title = 'Buyside & Sellside', 				inline = 'side',	group = VLiqCoGroup)
+sidemode								= input.string	(defval = 'Area',					title = '',									inline = 'side',	group = VLiqCoGroup,
+	  options							=				['Area', 'Line'])
+buysidecss								= input.color	(color.new(SmcBeColorLiUp, 76),		title = '',									inline = 'side',	group = VLiqCoGroup)
+sidesidecss								= input.color	(color.new(SmcBeColorLiDn, 76),		title = '',									inline = 'side',	group = VLiqCoGroup)
+showzone								= input.bool	(defval = true, 					title = 'Liquidación Sweep',				inline = 'sz',		group = VLiqCoGroup,					tooltip = SweepATool)
+zonethresh								= input.int		(defval = 10,						title = '',									inline = 'sz',		group = VLiqCoGroup,	minval = 2)
+upzone									= input.color	(color.new(SmcBeColorInUp, 60),		title = '',									inline = 'sz',		group = VLiqCoGroup)
+dnzone									= input.color	(color.new(SmcBeColorInDn, 60),		title = '',									inline = 'sz',		group = VLiqCoGroup)
 
 
 /// ＴＰＳ ―――――――――――――――――――――――――――――
@@ -990,22 +1056,6 @@ float atr								= (ta.atr(200) / (5/len))
 /// ＣＡＬＣＵＬＡＴＩＯＮＳ ―――――――――――――
 
 
-method txSz(string s) =>
-	out = switch s
-		"Tiny"							=> size.tiny
-		"Small"							=> size.small
-		"Normal"						=> size.normal
-		"Large"							=> size.large
-		"Huge"							=> size.huge
-		"Auto"							=> size.auto
-	out
-
-method lstyle(string style) =>
-	out	= switch style
-		'⎯⎯⎯⎯'							=> line.style_solid
-		'----'							=> line.style_dashed
-		'····'							=> line.style_dotted
-
 ghl()									=> [high[2], low[2], close[1], open[1], close, open, high, low, high[1], low[1], ta.atr(200)]
 
 method IDMIDX(bool use_max, int loc) =>
@@ -1046,8 +1096,8 @@ method find(structure ms, bool use_max, bool sweep, bool useob) =>
 			if use_max
 				for i = 0 to (bar_index - ms.loc) - 1
 					max					:= math.max(high[i], max)
-					min					:= max ==   high[i] ? low[i] : min
-					idx					:= max ==   high[i] ?      i : idx
+					min					:= max ==	high[i] ? low[i]	: min
+					idx					:= max ==	high[i] ?	i		: idx
 
 				if useob
 					if high[idx + 1] > high[idx]
@@ -1058,8 +1108,8 @@ method find(structure ms, bool use_max, bool sweep, bool useob) =>
 			else
 				for i = 0 to (bar_index - ms.loc) - 1
 					min					:= math.min(low[i], min)
-					max					:= min ==   low[i] ? high[i] : max
-					idx					:= min ==   low[i] ?       i : idx
+					max					:= min ==	low[i] ? high[i]	: max
+					idx					:= min ==	low[i] ?	i		: idx
 
 				if useob
 					if low[idx + 1] < low[idx]
@@ -1071,8 +1121,8 @@ method find(structure ms, bool use_max, bool sweep, bool useob) =>
 			if use_max
 				for i = 0 to (bar_index - ms.loc)
 					max					:= math.max(high[i], max)
-					min					:= max ==   high[i] ? low[i] : min
-					idx					:= max ==   high[i] ?      i : idx
+					min					:= max ==	high[i] ? low[i]	: min
+					idx					:= max ==	high[i] ?	i		: idx
 
 				if useob
 					if high[idx + 1] > high[idx]
@@ -1083,65 +1133,65 @@ method find(structure ms, bool use_max, bool sweep, bool useob) =>
 			else
 				for i = 0 to (bar_index - ms.loc)
 					min					:= math.min(low[i], min)
-					max					:= min ==   low[i] ? high[i] : max
-					idx					:= min ==   low[i] ?       i : idx
+					max					:= min ==	low[i] ? high[i]	: max
+					idx					:= min ==	low[i] ?		i	: idx
 
 				if useob
 					if low[idx + 1] < low[idx]
 						max				:= high[idx + 1]
 						min				:= low [idx + 1]
-						idx				:=      idx + 1
+						idx				:=		idx + 1
 
 	else
 		if ((bar_index - ms.xloc) - 1) > 0
 			if use_max
 				for i = 0 to (bar_index - ms.xloc) - 1
 					max					:= math.max(high[i], max)
-					min					:= max ==   high[i] ? low[i] : min
-					idx					:= max ==   high[i] ?      i : idx
+					min					:= max ==	high[i] ? low[i]	: min
+					idx					:= max ==	high[i] ?	i		: idx
 
 				if useob
 					if high[idx + 1] > high[idx]
 						max				:= high[idx + 1]
 						min				:= low [idx + 1]
-						idx				:=      idx + 1
+						idx				:=		idx + 1
 
 			else
 				for i = 0 to (bar_index - ms.xloc) - 1
 					min					:= math.min(low[i], min)
-					max					:= min ==   low[i] ? high[i] : max
-					idx					:= min ==   low[i] ?       i : idx
+					max					:= min ==	low[i] ? high[i]	: max
+					idx					:= min ==	low[i] ?	i		: idx
 
 				if useob
 					if low[idx + 1] < low[idx]
 						max				:= high[idx + 1]
 						min				:= low [idx + 1]
-						idx				:=      idx + 1
+						idx				:=		idx + 1
 
 		else
 			if use_max
 				for i = 0 to (bar_index - ms.xloc)
 					max					:= math.max(high[i], max)
-					min					:= max ==   high[i] ? low[i] : min
-					idx					:= max ==   high[i] ?      i : idx
+					min					:= max ==	high[i] ? low[i]	: min
+					idx					:= max ==	high[i] ?	i		: idx
 
 				if useob
 					if high[idx + 1] > high[idx]
 						max				:= high[idx + 1]
 						min				:= low [idx + 1]
-						idx				:=      idx + 1
+						idx				:=		idx + 1
 
 			else
 				for i = 0 to (bar_index - ms.xloc)
 					min					:= math.min(low[i], min)
-					max					:= min ==   low[i] ? high[i] : max
-					idx					:= min ==   low[i] ?       i : idx
+					max					:= min ==	low[i] ? high[i]	: max
+					idx					:= min ==	low[i] ?	i		: idx
 
 				if useob
 					if low[idx + 1] < low[idx]
 						max				:= high[idx + 1]
 						min				:= low [idx + 1]
-						idx				:=      idx + 1
+						idx				:=		idx + 1
 
 	idx
 
@@ -1153,12 +1203,12 @@ method fnOB(ob[] block, bool bull, float cords, int idx) =>
 			block.unshift(ob.new(
 				  true,
 				  cords,
-				  low   [idx],
+				  low		[idx],
 				  math.avg(cords, low[idx]),
-				  time  [idx],
+				  time		[idx],
 				  obupcs,
-				  volume[idx],
-				  close [idx]  > open[idx] ? 1 : -1,
+				  volume	[idx],
+				  close		[idx]	> open[idx] ? 1 : -1,
 				  1,
 				  1,
 				  1,
@@ -1171,13 +1221,13 @@ method fnOB(ob[] block, bool bull, float cords, int idx) =>
 			brobenter.breaker			:= false
 			block.unshift(ob.new(
 				  false,
-				  high	[idx],
+				  high		[idx],
 				  cords,
 				  math.avg(cords, high[idx]),
-				  time	[idx],
+				  time		[idx],
 				  obdncs,
-				  volume[idx],
-				  close	[idx]   > open[idx] ? 1 : -1,
+				  volume	[idx],
+				  close		[idx]	> open[idx] ? 1 : -1,
 				  1,
 				  1,
 				  1,
@@ -1191,37 +1241,37 @@ method mitigated(ob[] block) =>
 			if not stuff.isbb
 				switch stuff.bull
 					true =>
-						if obmiti == "Cierre" ? math.min(close, open) < stuff.btm : obmiti == "Mecha" ? low  < stuff.btm : obmiti == "Avg" ? low  < stuff.avg : na
-							stuff.isbb          := true
-							stuff.bbloc         := time
+						if obmiti == 'Cierre' ? math.min(close, open) < stuff.btm : obmiti == 'Mecha' ? low  < stuff.btm : obmiti == 'Avg' ? low  < stuff.avg : na
+							stuff.isbb			:= true
+							stuff.bbloc			:= time
 							if not obshowbb
 								block.remove(i)
 
 					false =>
-						if obmiti == "Cierre" ? math.max(close, open) > stuff.top : obmiti == "Mecha" ? high > stuff.top : obmiti == "Avg" ? high > stuff.avg : na
-							stuff.isbb          := true
-							stuff.bbloc         := time
+						if obmiti == 'Cierre' ? math.max(close, open) > stuff.top : obmiti == 'Mecha' ? high > stuff.top : obmiti == 'Avg' ? high > stuff.avg : na
+							stuff.isbb			:= true
+							stuff.bbloc			:= time
 							if not obshowbb
 								block.remove(i)
 
 			else
 				switch stuff.bull
 					true =>
-						if obmiti == "Cierre" ? math.max(close, open) > stuff.top : obmiti == "Mecha" ? high > stuff.top : obmiti == "Avg" ? high > stuff.avg : na
+						if obmiti == 'Cierre' ? math.max(close, open) > stuff.top : obmiti == 'Mecha' ? high > stuff.top : obmiti == 'Avg' ? high > stuff.avg : na
 							
 							block.remove(i)
 
 					false =>
-						if obmiti == "Cierre" ? math.min(close, open) < stuff.btm : obmiti == "Mecha" ? low  < stuff.btm : obmiti == "Avg" ? low  < stuff.avg : na
+						if obmiti == 'Cierre' ? math.min(close, open) < stuff.btm : obmiti == 'Mecha' ? low  < stuff.btm : obmiti == 'Avg' ? low  < stuff.avg : na
 							
 							block.remove(i)
 
 overlap(ob[] bull, ob[] bear) =>
 	if bull.size() > 1
-		for i       = bull.size() - 1 to 1
-			stuff   = bull.get(i)
-			current = bull.get(0)
-			v       = wichlap == "Reciente" ? i : 0
+		for i							= bull.size() - 1 to 1
+			stuff						= bull.get(i)
+			current						= bull.get(0)
+			v							= wichlap == 'Reciente' ? i : 0
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => bull.remove(v)
 				stuff.top < current.top and stuff.btm > current.btm => bull.remove(v)
@@ -1229,10 +1279,10 @@ overlap(ob[] bull, ob[] bear) =>
 				stuff.top < current.top and stuff.top > current.btm => bull.remove(v)
 
 	if bear.size() > 1
-		for i       = bear.size() - 1 to 1
-			stuff   = bear.get(i)
-			current = bear.get(0)
-			v       = wichlap == "Reciente" ? i : 0
+		for i							= bear.size() - 1 to 1
+			stuff						= bear.get(i)
+			current						= bear.get(0)
+			v							= wichlap == 'Reciente' ? i : 0
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => bear.remove(v)
 				stuff.top < current.top and stuff.btm > current.btm => bear.remove(v)
@@ -1240,10 +1290,10 @@ overlap(ob[] bull, ob[] bear) =>
 				stuff.top < current.top and stuff.top > current.btm => bear.remove(v)
 
 	if bull.size() > 0 and bear.size() > 0
-		for i       = bull.size() - 1 to 0
-			stuff   = bull.get(i)
-			current = bear.get(0)
-			v       = wichlap == "Reciente" ? 0 : i
+		for i							= bull.size() - 1 to 0
+			stuff						= bull.get(i)
+			current						= bear.get(0)
+			v							= wichlap == 'Reciente' ? 0 : i
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => bull.remove(v)
 				stuff.top < current.top and stuff.btm > current.btm => bull.remove(v)
@@ -1251,10 +1301,10 @@ overlap(ob[] bull, ob[] bear) =>
 				stuff.top < current.top and stuff.top > current.btm => bull.remove(v)
 
 	if bull.size() > 0 and bear.size() > 0
-		for i       = bear.size() - 1 to 0
-			stuff   = bear.get(i)
-			current = bull.get(0)
-			v       = wichlap == "Reciente" ? 0 : i
+		for i							= bear.size() - 1 to 0
+			stuff						= bear.get(i)
+			current						= bull.get(0)
+			v							= wichlap == 'Reciente' ? 0 : i
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => bear.remove(v)
 				stuff.top < current.top and stuff.btm > current.btm => bear.remove(v)
@@ -1263,9 +1313,9 @@ overlap(ob[] bull, ob[] bear) =>
 
 overlapFVG(FVG[] blFVG, FVG[] brFVG) =>
 	if blFVG.size() > 1
-		for i       = blFVG.size() - 1 to 1
-			stuff   = blFVG.get(i)
-			current = blFVG.get(0)
+		for i							= blFVG.size() - 1 to 1
+			stuff						= blFVG.get(i)
+			current						= blFVG.get(0)
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => blFVG.remove(i)
 				stuff.top < current.top and stuff.btm > current.btm => blFVG.remove(i)
@@ -1273,9 +1323,9 @@ overlapFVG(FVG[] blFVG, FVG[] brFVG) =>
 				stuff.top < current.top and stuff.top > current.btm => blFVG.remove(i)
 
 	if brFVG.size() > 1
-		for i       = brFVG.size() - 1 to 1
-			stuff   = brFVG.get(i)
-			current = brFVG.get(0)
+		for i							= brFVG.size() - 1 to 1
+			stuff						= brFVG.get(i)
+			current						= brFVG.get(0)
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => brFVG.remove(i)
 				stuff.top < current.top and stuff.btm > current.btm => brFVG.remove(i)
@@ -1283,9 +1333,9 @@ overlapFVG(FVG[] blFVG, FVG[] brFVG) =>
 				stuff.top < current.top and stuff.top > current.btm => brFVG.remove(i)
 
 	if blFVG.size() > 0 and brFVG.size() > 0
-		for i       = blFVG.size() - 1 to 0
-			stuff   = blFVG.get(i)
-			current = brFVG.get(0)
+		for i							= blFVG.size() - 1 to 0
+			stuff						= blFVG.get(i)
+			current						= brFVG.get(0)
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => blFVG.remove(i)
 				stuff.top < current.top and stuff.btm > current.btm => blFVG.remove(i)
@@ -1293,9 +1343,9 @@ overlapFVG(FVG[] blFVG, FVG[] brFVG) =>
 				stuff.top < current.top and stuff.top > current.btm => blFVG.remove(i)
 
 	if blFVG.size() > 0 and brFVG.size() > 0
-		for i       = brFVG.size() - 1 to 0
-			stuff   = brFVG.get(i)
-			current = blFVG.get(0)
+		for i							= brFVG.size() - 1 to 0
+			stuff						= brFVG.get(i)
+			current						= blFVG.get(0)
 			switch
 				stuff.btm > current.btm and stuff.btm < current.top => brFVG.remove(i)
 				stuff.top < current.top and stuff.btm > current.btm => brFVG.remove(i)
@@ -1323,17 +1373,80 @@ method umt(ob metric) =>
 
 method display(ob id, ob[] full, int i) =>
 	if not id.isbb
-		bin.bx.unshift(box.new	(top = id.top,		bottom = id.btm,		left = id.loc,		right	= time,			border_color = na,		bgcolor = id.css,	xloc = xloc.bar_time))
-		bin.bx.unshift(box.new	(top = id.top,		bottom = id.btm,		left = time,		right	= time + 1,		border_color = na,		bgcolor = id.css,	xloc = xloc.bar_time, extend = extend.right))
+		bin.bx.unshift(box.new(
+			  top						= id.top,
+			  bottom					= id.btm,
+			  left						= id.loc,
+			  right						= time,
+			  border_color				= na,
+			  bgcolor					= id.css,
+			  xloc = xloc.bar_time)
+			  )
+
+		bin.bx.unshift(box.new(
+			  top						= id.top,
+			  bottom					= id.btm,
+			  left						= time,
+			  right						= time + 1,
+			  border_color				= na,
+			  bgcolor					= id.css,
+			  xloc						= xloc.bar_time,
+			  extend					= extend.right)
+			  )
 
 	else
-		bin.bx.unshift(box.new	(top = id.top,		bottom = id.btm,		left = id.loc,		right = id.bbloc,		border_color = na,		bgcolor = id.css,					xloc = xloc.bar_time))
-		bin.bx.unshift(box.new	(top = id.top,		bottom = id.btm,		left = id.bbloc,	right = time,			border_color = id.css,	bgcolor = id.bull ? bbup : bbdn,	xloc = xloc.bar_time, border_width = 2))
-		bin.bx.unshift(box.new	(top = id.top,		bottom = id.btm,		left = time,		right = time + 1 ,		border_color = id.css,	bgcolor = id.bull ? bbup : bbdn,	xloc = xloc.bar_time, extend = extend.right))        
+		bin.bx.unshift(box.new(
+			  top						= id.top,
+			  bottom					= id.btm,
+			  left						= id.loc,
+			  right						= id.bbloc,
+			  border_color				= na,
+			  bgcolor					= id.css,
+			  xloc						= xloc.bar_time)
+			  )
+
+		bin.bx.unshift(box.new(
+			  top						= id.top,
+			  bottom					= id.btm,
+			  left						= id.bbloc,
+			  right						= time,
+			  border_color				= id.css,
+			  bgcolor					= id.bull ? bbup : bbdn,
+			  xloc						= xloc.bar_time,
+			  border_width = 2)
+			  )
+
+		bin.bx.unshift(box.new(
+			  top						= id.top,
+			  bottom					= id.btm,
+			  left						= time,
+			  right						= time + 1 ,
+			  border_color				= id.css,
+			  bgcolor					= id.bull ? bbup : bbdn,
+			  xloc						= xloc.bar_time,
+			  extend					= extend.right)
+			  )        
 
 	if obshowactivity
-		bin.bx.unshift(box.new	(top = id.top,		bottom = id.avg,		left = id.loc,		right = id.xlocbl,		border_color = na,		bgcolor = obactup,	xloc = xloc.bar_time))
-		bin.bx.unshift(box.new	(top = id.avg,		bottom = id.btm,		left = id.loc,		right = id.xlocbr,		border_color = na,		bgcolor = obactdn,	xloc = xloc.bar_time))
+		bin.bx.unshift(box.new(
+			  top						= id.top,
+			  bottom					= id.avg,
+			  left						= id.loc,
+			  right						= id.xlocbl,
+			  border_color				= na,
+			  bgcolor					= obactup,
+			  xloc						= xloc.bar_time)
+			  )
+
+		bin.bx.unshift(box.new(
+			  top						= id.avg,
+			  bottom					= id.btm,
+			  left						= id.loc,
+			  right						= id.xlocbr,
+			  border_color				= na,
+			  bgcolor					= obactdn,
+			  xloc						= xloc.bar_time)
+			  )
 
 	if showline
 		bin.ln.unshift(line.new(
@@ -1367,27 +1480,89 @@ method display(ob id, ob[] full, int i) =>
 							  ids.avg,
 							  textcolor	= color.new(ids.css, 50),
 							  style		= label.style_label_left,
-							  size		= obtxt.txSz(),
+							  size		= obtxt.FunGlobalTextSize(),
 							  color		= SmcBeColorBackGround,
 							  text		= str.tostring(math.round(full.get(y).vol, 3),
-							  format	= format.volume) + " (" + str.tostring(dV.get(y)) + "%)"))
+							  format	= format.volume) + ' (' + str.tostring(dV.get(y)) + '%)'))
 
 method dispFVG(FVG fvg, int i, bool bull) =>
 	ext = fvgextend ? extend.right : extend.none
 	if not fvg.isbb
 		bin.bx.unshift(box .new(top = fvg.top, bottom = fvg.btm, left = fvg.loc                 , right = time                   , border_color = na   , bgcolor = bull ? fvg_upcss : fvg_dncss            , xloc = xloc.bar_time, extend = ext))
 		if fvgline
-			bin.ln.unshift(line.new(x1  = fvg.loc, x2 = time       , y1 = math.avg(fvg.top, fvg.btm), y2 = math.avg(fvg.top, fvg.btm), xloc = xloc.bar_time, color = color.new(bull ? fvg_upcss : fvg_dncss, 0)                      , extend = ext))
+			bin.ln.unshift(line.new(
+				  x1					= fvg.loc,
+				  x2					= time,
+				  y1					= math.avg(fvg.top, fvg.btm),
+				  y2					= math.avg(fvg.top, fvg.btm),
+				  xloc					= xloc.bar_time,
+				  color					= color.new(bull ? fvg_upcss : fvg_dncss, 0),
+				  extend = ext)
+				  )
+
 		if dispraid
-			bin.ln.unshift(line.new(x1  = fvg.raidloc, x2 = fvg.raidx2, y1 = fvg.raidy, y2 = fvg.raidy, xloc = xloc.bar_time, color = fvg.raidcs))
-			bin.lb.unshift(label.new(x = int(math.avg(fvg.raidloc, fvg.raidx2)), y = fvg.raidy, text = "x", xloc = xloc.bar_time, textcolor = fvg.raidcs, style = bull ? label.style_label_up : label.style_label_down, size = size.small, color = SmcBeColorBackGround))
+			bin.ln.unshift(line.new(
+				  x1					= fvg.raidloc,
+				  x2					= fvg.raidx2,
+				  y1					= fvg.raidy,
+				  y2					= fvg.raidy,
+				  xloc					= xloc.bar_time,
+				  color					= fvg.raidcs)
+				  )
+
+			bin.lb.unshift(label.new(
+				  x						= int(math.avg(fvg.raidloc, fvg.raidx2)),
+				  y						= fvg.raidy,
+				  text					= 'x',
+				  xloc					= xloc.bar_time,
+				  textcolor				= fvg.raidcs,
+				  style					= bull ? label.style_label_up : label.style_label_down,
+				  size					= size.small,
+				  color					= SmcBeColorBackGround)
+				  )
 
 	else
-		bin.bx.unshift(box .new(top = fvg.top  , bottom = fvg.btm, left = fvg.loc                   , right = fvg.bbloc              , border_color = na                                 , bgcolor = bull ? fvg_upcss : fvg_dncss, xloc = xloc.bar_time))
-		bin.bx.unshift(box .new(top = fvg.top  , bottom = fvg.btm, left = fvg.bbloc                 , right = time                   , border_color = bull ? fvg_dncss : fvg_upcss       , bgcolor = bull ? fvg_dncss : fvg_upcss, xloc = xloc.bar_time, extend = ext))
+		bin.bx.unshift(box .new(
+				  top					= fvg.top,
+				  bottom				= fvg.btm,
+				  left					= fvg.loc,
+				  right					= fvg.bbloc,
+				  border_color			= na,
+				  bgcolor				= bull ? fvg_upcss : fvg_dncss,
+				  xloc					= xloc.bar_time)
+				  )
+
+		bin.bx.unshift(box .new(
+				  top					= fvg.top,
+				  bottom				= fvg.btm,
+				  left					= fvg.bbloc,
+				  right					= time,
+				  border_color			= bull ? fvg_dncss : fvg_upcss,
+				  bgcolor				= bull ? fvg_dncss : fvg_upcss,
+				  xloc					= xloc.bar_time,
+				  extend				= ext)
+				  )
+
 		if fvgline
-			bin.ln.unshift(line.new(x1  = fvg.loc  , x2 = fvg.bbloc  , y1   = math.avg(fvg.top, fvg.btm), y2 = math.avg(fvg.top, fvg.btm), color = color.new(bull ? fvg_upcss : fvg_dncss, 0)                                        , xloc = xloc.bar_time))
-			bin.ln.unshift(line.new(x1  = fvg.bbloc, x2 = time       , y1   = math.avg(fvg.top, fvg.btm), y2 = math.avg(fvg.top, fvg.btm), color = color.new(bull ? fvg_dncss : fvg_upcss, 0)                                        , xloc = xloc.bar_time, extend = ext, style = line.style_dashed))
+			bin.ln.unshift(line.new(
+				  x1					= fvg.loc,
+				  x2					= fvg.bbloc,
+				  y1					= math.avg(fvg.top, fvg.btm),
+				  y2					= math.avg(fvg.top, fvg.btm),
+				  color					= color.new(bull ? fvg_upcss : fvg_dncss, 0),
+				  xloc					= xloc.bar_time)
+				  )
+
+			bin.ln.unshift(line.new(
+				  x1					= fvg.bbloc,
+				  x2					= time,
+				  y1					= math.avg(fvg.top, fvg.btm),
+				  y2					= math.avg(fvg.top, fvg.btm),
+				  color					= color.new(bull ? fvg_dncss : fvg_upcss, 0),
+				  xloc					= xloc.bar_time,
+				  extend				= ext,
+				  style					= line.style_dashed)
+				  )
 
 
 
@@ -1465,7 +1640,7 @@ mapping() =>
 			  charts,
 			  line_color				= mappingcss,
 			  xloc						= xloc.bar_time,
-			  line_style				= mappingStyle.lstyle()
+			  line_style				= mappingStyle.FunGlobalLineStyle()
 			  )
 
 posLIQ() =>
@@ -1517,9 +1692,9 @@ dEHL() =>
 	int                 pos  = 2
 	float             thresh = 0.1
 	switch ehlmode
-		"Short-Term"	=> pos			:= 2,	thresh	:= 0.1
-		"Mid-Term"		=> pos			:= 6,	thresh	:= 0.25
-		"Long-Term"		=> pos			:= 10,	thresh	:= 0.5
+		'Short-Term'	=> pos			:= 2,	thresh	:= 0.1
+		'Mid-Term'		=> pos			:= 6,	thresh	:= 0.25
+		'Long-Term'		=> pos			:= 10,	thresh	:= 0.5
 
 	var ehl w = ehl.new      (0 , 0 , 0 , 0)
 	float top = ta .pivothigh(high, pos, pos)
@@ -1547,7 +1722,7 @@ dEHL() =>
 						 equalname.new(
 							  int(math.avg(bar_index - pos, w.t)),
 							  top,
-							  "EQH",
+							  'EQH',
 							  ehlupcs,
 							  label.style_label_down
 							  )
@@ -1577,7 +1752,7 @@ dEHL() =>
 						 equalname.new(
 							  int(math.avg(bar_index - pos, w.b)),
 							  btm,
-							  "EQL",
+							  'EQL',
 							  ehldowncs,
 							  label.style_label_up
 							  )
@@ -1612,7 +1787,7 @@ dEHL() =>
 							  color		= SmcBeColorBackGround,
 							  style		= labe.style,
 							  textcolor	= labe.css,
-							  size		= mstext.txSz(),
+							  size		= mstext.FunGlobalTextSize(),
 							  text		= labe.txt
 							  )
 						  )
@@ -1640,7 +1815,7 @@ dEHL() =>
 							  color		= SmcBeColorBackGround,
 							  style		= labe.style,
 							  textcolor	= labe.css,
-							  size		= mstext.txSz(),
+							  size		= mstext.FunGlobalTextSize(),
 							  text		= labe.txt
 							  )
 						  )
@@ -1659,33 +1834,33 @@ method SFP(structure ms) =>
 	n									= bar_index
 	t1									= time[1]
 
-	string	size						= devsize.txSz()
+	string	size						= devsize.FunGlobalTextSize()
 	bool	vol							= (ta.sma(v, 21) * sfpthresh) < v ? true : false
 	bool blPrint						= true
 	bool brPrint						= true
 
 	switch sfpfilter
-		"Trend Following" =>
+		'Trend Following' =>
 			switch ms.trend
 				1		=> blPrint		:= true,	brPrint		:= false
 				-1		=> blPrint		:= false,	brPrint		:= true
 
-		"Counter Trade" =>
+		'Counter Trade' =>
 			switch ms.trend
 				1		=> blPrint		:= false,	brPrint		:= true
 				-1		=> blPrint		:= true,	brPrint		:= false
 
 		=> na
 
-	var	SFP			[] BLsfp	= array.new<	SFP		>()
-	var	SFP			[] BRsfp	= array.new<	SFP		>()
-	float			[] lg		= array.new<	float	>()
-	int				[] tn		= array.new<	int		>()
-	float			[] ac		= array.new<	float	>()
-	var	sfpbuildlbl [] BLlb		= array.new<sfpbuildlbl >()
-	var	sfpbuildlbl [] BRlb		= array.new<sfpbuildlbl >()
-	var	sfpbuildline[] BLln		= array.new<sfpbuildline>()
-	var	sfpbuildline[] BRln		= array.new<sfpbuildline>()
+	var	SFP			[] BLsfp			= array.new<	SFP		>()
+	var	SFP			[] BRsfp			= array.new<	SFP		>()
+	float			[] lg				= array.new<	float	>()
+	int				[] tn				= array.new<	int		>()
+	float			[] ac				= array.new<	float	>()
+	var	sfpbuildlbl [] BLlb				= array.new<sfpbuildlbl >()
+	var	sfpbuildlbl [] BRlb				= array.new<sfpbuildlbl >()
+	var	sfpbuildline[] BLln				= array.new<sfpbuildline>()
+	var	sfpbuildline[] BRln				= array.new<sfpbuildline>()
 
 	if l > l1 and l1 < l2 and vol[1]
 		BLsfp.clear()
@@ -1770,7 +1945,7 @@ method SFP(structure ms) =>
 								  time,
 								  (low < sfp.y ? low : sfp.y),
 								  label.style_label_up,
-								  blsfpcs, "▲\nSFP"
+								  blsfpcs, '▲\nSFP'
 								  )
 							  )
 						BLln.unshift(
@@ -1805,7 +1980,7 @@ method SFP(structure ms) =>
 								  (high > sfp.y ? high : sfp.y),
 								  label.style_label_down,
 								  brsfpcs,
-								  "SFP\n▼"
+								  'SFP\n▼'
 								  )
 							  )
 
@@ -1894,9 +2069,9 @@ method SFP(structure ms) =>
 			bull = math.max(BLln.get(0).loc, BRln.get(0).loc) == BLln.get(0).loc ?        true : false
 			switch bull
 				false => 
-					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor - 4.0 * (use.y - use.ancor), y2 = use.ancor - 4.0 * (use.y - use.ancor), xloc = xloc.bar_time, color = chart.fg_color, style = devstyle.lstyle()))
-					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor - 2.0 * (use.y - use.ancor), y2 = use.ancor - 2.0 * (use.y - use.ancor), xloc = xloc.bar_time, color = devcss, style = devstyle.lstyle()))
-					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor - 2.5 * (use.y - use.ancor), y2 = use.ancor - 2.5 * (use.y - use.ancor), xloc = xloc.bar_time, color = devcss, style = devstyle.lstyle()))
+					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor - 4.0 * (use.y - use.ancor), y2 = use.ancor - 4.0 * (use.y - use.ancor), xloc = xloc.bar_time, color = chart.fg_color, style = devstyle.FunGlobalLineStyle()))
+					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor - 2.0 * (use.y - use.ancor), y2 = use.ancor - 2.0 * (use.y - use.ancor), xloc = xloc.bar_time, color = devcss, style = devstyle.FunGlobalLineStyle()))
+					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor - 2.5 * (use.y - use.ancor), y2 = use.ancor - 2.5 * (use.y - use.ancor), xloc = xloc.bar_time, color = devcss, style = devstyle.FunGlobalLineStyle()))
 					if devfill
 						bin.lf.unshift(
 							 linefill.new(
@@ -1907,14 +2082,14 @@ method SFP(structure ms) =>
 							  )
 
 					if devlvl
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = chart.fg_color, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss        , color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss        , color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + '%' + ' (' + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ')', style = label.style_label_right, textcolor = chart.fg_color, color = SmcBeColorBackGround, size = devsize.FunGlobalTextSize(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + '%' + ' (' + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ')', style = label.style_label_right, textcolor = devcss        , color = SmcBeColorBackGround, size = devsize.FunGlobalTextSize(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + '%' + ' (' + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ')', style = label.style_label_right, textcolor = devcss        , color = SmcBeColorBackGround, size = devsize.FunGlobalTextSize(), xloc = xloc.bar_time))
 
 				true => 
-					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 4.0 * (use.ancor - use.y), y2 = use.ancor + 4.0 * (use.ancor - use.y), xloc = xloc.bar_time, color = chart.fg_color, style = devstyle.lstyle()))
-					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 2.0 * (use.ancor - use.y), y2 = use.ancor + 2.0 * (use.ancor - use.y), xloc = xloc.bar_time, color = devcss, style = devstyle.lstyle()))
-					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 2.5 * (use.ancor - use.y), y2 = use.ancor + 2.5 * (use.ancor - use.y), xloc = xloc.bar_time, color = devcss, style = devstyle.lstyle()))
+					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 4.0 * (use.ancor - use.y), y2 = use.ancor + 4.0 * (use.ancor - use.y), xloc = xloc.bar_time, color = chart.fg_color, style = devstyle.FunGlobalLineStyle()))
+					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 2.0 * (use.ancor - use.y), y2 = use.ancor + 2.0 * (use.ancor - use.y), xloc = xloc.bar_time, color = devcss, style = devstyle.FunGlobalLineStyle()))
+					bin.ln.unshift(line.new(x1 = use.x1, x2 = time, y1 = use.ancor + 2.5 * (use.ancor - use.y), y2 = use.ancor + 2.5 * (use.ancor - use.y), xloc = xloc.bar_time, color = devcss, style = devstyle.FunGlobalLineStyle()))
 					if devfill
 						bin.lf.unshift(
 							 linefill.new(
@@ -1925,9 +2100,9 @@ method SFP(structure ms) =>
 							  )
 
 					if devlvl
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = chart.fg_color, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
-						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + "%" + " (" + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ")", style = label.style_label_right, textcolor = devcss, color = SmcBeColorBackGround, size = devsize.txSz(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 4.0 * (use.ancor - use.y), text = str.tostring(4.0 * 100) + '%' + ' (' + str.tostring(math.round(use.ancor + 4.0 * (use.ancor - use.y), 2)) + ')', style = label.style_label_right, textcolor = chart.fg_color, color = SmcBeColorBackGround, size = devsize.FunGlobalTextSize(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.0 * (use.ancor - use.y), text = str.tostring(2.0 * 100) + '%' + ' (' + str.tostring(math.round(use.ancor + 2.0 * (use.ancor - use.y), 2)) + ')', style = label.style_label_right, textcolor = devcss, color = SmcBeColorBackGround, size = devsize.FunGlobalTextSize(), xloc = xloc.bar_time))
+						bin.lb.unshift(label.new(x = use.x1, y = use.ancor + 2.5 * (use.ancor - use.y), text = str.tostring(2.5 * 100) + '%' + ' (' + str.tostring(math.round(use.ancor + 2.5 * (use.ancor - use.y), 2)) + ')', style = label.style_label_right, textcolor = devcss, color = SmcBeColorBackGround, size = devsize.FunGlobalTextSize(), xloc = xloc.bar_time))
 
 
 dFVG() =>
@@ -1942,7 +2117,7 @@ dFVG() =>
 	cc    =                        timeframe.change()
 
 	switch
-		what_fvg == "FVG" or what_fvg == "Breakers" =>
+		what_fvg == 'FVG' or what_fvg == 'Breakers' =>
 			if l > h2 and cc and c1 > blth
 				upfvg := true
 				
@@ -1995,26 +2170,26 @@ dFVG() =>
 	if blFVG.size() > 0
 		for [i, fvg] in blFVG
 			if not fvg.isbb
-				if fvg_src				== "Cierre" ? math.min(c, o) < fvg.btm : fvg_src == "Mecha" ? l < fvg.btm : fvg_src == "Avg" ? l < math.avg(fvg.top, fvg.btm) : na
+				if fvg_src				== 'Cierre' ? math.min(c, o) < fvg.btm : fvg_src == 'Mecha' ? l < fvg.btm : fvg_src == 'Avg' ? l < math.avg(fvg.top, fvg.btm) : na
 					fvg.isbb			:= true
 					fvg.bbloc			:= time
-					if what_fvg			== "FVG"
+					if what_fvg			== 'FVG'
 						blFVG.remove(i)
 
 			else
-				if (fvg_src				== "Cierre" ? math.max(c, o) > fvg.top : fvg_src == "Mecha" ? h > fvg.top : fvg_src == "Avg" ? h > math.avg(fvg.top, fvg.btm) : na) and what_fvg == "Breakers"
+				if (fvg_src				== 'Cierre' ? math.max(c, o) > fvg.top : fvg_src == 'Mecha' ? h > fvg.top : fvg_src == 'Avg' ? h > math.avg(fvg.top, fvg.btm) : na) and what_fvg == 'Breakers'
 					blFVG.remove(i)
 
 	if brFVG.size() > 0
 		for [i, fvg] in brFVG
 			if not fvg.isbb
-				if (fvg_src				== "Cierre" ? math.max(c, o) > fvg.top : fvg_src == "Mecha" ? h > fvg.top : fvg_src == "Avg" ? h > math.avg(fvg.top, fvg.btm) : na)
+				if (fvg_src				== 'Cierre' ? math.max(c, o) > fvg.top : fvg_src == 'Mecha' ? h > fvg.top : fvg_src == 'Avg' ? h > math.avg(fvg.top, fvg.btm) : na)
 					fvg.isbb			:= true
 					fvg.bbloc			:= time
-					if what_fvg			== "FVG"
+					if what_fvg			== 'FVG'
 						brFVG.remove(i)
 			else
-				if (fvg_src				== "Cierre" ? math.min(c, o) < fvg.btm : fvg_src == "Mecha" ? l < fvg.btm : fvg_src == "Avg" ? l < math.avg(fvg.top, fvg.btm) : na) and what_fvg == "Breakers"
+				if (fvg_src				== 'Cierre' ? math.min(c, o) < fvg.btm : fvg_src == 'Mecha' ? l < fvg.btm : fvg_src == 'Avg' ? l < math.avg(fvg.top, fvg.btm) : na) and what_fvg == 'Breakers'
 					brFVG.remove(i)
 
 	if fvgoverlap
@@ -2080,8 +2255,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 	var float dn						= na
 	idbull								= ms.find(false, false, true)
 	idbear								= ms.find(true , false, true)
-	btmP								= obmode == "Longitud" ? (high[idbear] - 1 * atr[idbear]) < low [idbear] ? low [idbear] : (high[idbear] - 1 * atr[idbear]) : low [idbear]
-	topP								= obmode == "Longitud" ? (low [idbull] + 1 * atr[idbull]) > high[idbull] ? high[idbull] : (low [idbull] + 1 * atr[idbull]) : high[idbull]
+	btmP								= obmode == 'Longitud' ? (high[idbear] - 1 * atr[idbear]) < low [idbear] ? low [idbear] : (high[idbear] - 1 * atr[idbear]) : low [idbear]
+	topP								= obmode == 'Longitud' ? (low [idbull] + 1 * atr[idbull]) > high[idbull] ? high[idbull] : (low [idbull] + 1 * atr[idbull]) : high[idbull]
 	atr									= ta.atr (200)
 	buy									= low  + atr
 	sel									= high - atr
@@ -2133,8 +2308,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 	if ms.start == 0
 		ms								:= structure.new(bar_index, na, high, low , bar_index, bar_index, 0, 1, na, bar_index)
 		if draw
-			bldw.unshift(drawms.new(time, time, high,	"CHoCH",	upcss,	line.style_dashed))
-			brdw.unshift(drawms.new(time, time, low,	"CHoCH",	dncss,	line.style_dashed))
+			bldw.unshift(drawms.new(time, time, high,	'CHoCH',	upcss,	line.style_dashed))
+			brdw.unshift(drawms.new(time, time, low,	'CHoCH',	dncss,	line.style_dashed))
 
 	ms.upsweep							:= false
 	ms.dnsweep							:= false
@@ -2150,13 +2325,13 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					dw					= brdw.get(0)
 					dw.x2				:= time
 					dw.style			:= line.style_dotted
-					dw.txt				:= "x"
+					dw.txt				:= 'x'
 					brdw.unshift(
 						 drawms.new(
 							  time,
 							  time,
 							  low,
-							  "CHoCH",
+							  'CHoCH',
 							  dncss,
 							  line.style_dashed
 							  )
@@ -2171,13 +2346,13 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					dw					= bldw.get(0)
 					dw.x2				:= time
 					dw.style			:= line.style_dotted
-					dw.txt				:= "x"
+					dw.txt				:= 'x'
 					bldw.unshift(
 						 drawms.new(
 							  time,
 							  time,
 							  high,
-							  "CHoCH",
+							  'CHoCH',
 							  upcss,
 							  line.style_dashed
 							  )
@@ -2185,7 +2360,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 
 			close <= ms.choch =>
 				
-				ms.txt					:= "choch"
+				ms.txt					:= 'choch'
 				lc.start				:= true
 				lc.count				:= 0
 				blob.fnOB(true, topP, idbull)
@@ -2204,7 +2379,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 
 			close >= ms.bos =>
 				
-				ms.txt					:= "choch"
+				ms.txt					:= 'choch'
 				lc.start				:= true
 				lc.count				:= 0
 				brob.fnOB(false, btmP, idbear)
@@ -2229,7 +2404,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					ms.temp				:= bar_index 
 
 				if bar_index % mslen * 2 == 0
-					if not na(ms.bos) and msmode == "Puntos estrechos" and php.size() > 0
+					if not na(ms.bos) and msmode == 'Puntos estrechos' and php.size() > 0
 						if php.get(0) < ms.choch
 							// ms.xloc  := phn.get(0)
 							ms.choch	:= php.get(0)
@@ -2253,7 +2428,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 									  time[bar_index - ms.loc],
 									  time,
 									  low [bar_index - ms.loc],
-									  "BOS",
+									  'BOS',
 									  dncss,
 									  line.style_dashed
 									  )
@@ -2276,13 +2451,13 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 							dw			= brdw.get(0)
 							dw.x2		:= time
 							dw.style	:= line.style_dotted
-							dw.txt		:= "x"
+							dw.txt		:= 'x'
 							brdw.unshift(
 								 drawms.new(
 									  time,
 									  time,
 									  low,
-									  "BOS",
+									  'BOS',
 									  dncss,
 									  line.style_dashed
 									  )
@@ -2297,7 +2472,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 									  btm,
 									  time[id],
 									  sidesidecss,
-									  "Sell Side",
+									  'Sell Side',
 									  volume[id]
 									  )
 								  )
@@ -2308,7 +2483,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 
 					close <= ms.bos and not na(ms.bos) =>
 						
-						ms.txt			:= "bos"
+						ms.txt			:= 'bos'
 						ms.zz			:= ms.bos
 						ms.zn			:= bar_index
 						lc.start		:= true
@@ -2338,14 +2513,14 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 							dw			= bldw.get(0)
 							dw.x2		:= time
 							dw.style	:= line.style_dotted
-							dw.txt		:= "x"
+							dw.txt		:= 'x'
 							bldw.unshift(
 								 drawms.new(
 									  time,
 
 									  time,
 									  high,
-									  "CHoCH",
+									  'CHoCH',
 									  upcss,
 									  line.style_dashed
 									  )
@@ -2353,7 +2528,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 
 					close >= ms.choch =>
 						
-						ms.txt			:= "choch"
+						ms.txt			:= 'choch'
 						ms.zz			:= ms.choch
 						ms.zn			:= bar_index
 						lc.start		:= true
@@ -2369,7 +2544,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 											  time,
 									 		  time,
 									 		  low,
-									 		  "BOS",
+									 		  'BOS',
 									 		  dncss,
 									 		  line.style_dashed
 											  )
@@ -2387,12 +2562,12 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						if draw
 							dw			= bldw.get(0)
 							dw.x2		:= time
-							dw.txt		:= "CHoCH"
+							dw.txt		:= 'CHoCH'
 							dw.style	:= internal ? line.style_dashed : line.style_solid
 							choch		= brdw.get(0)
 							choch.x2	:= time
 							choch.y		:= ms.choch
-							choch.txt	:= "CHoCH"
+							choch.txt	:= 'CHoCH'
 
 						if showside
 							id			= ms.find(false, true, true)
@@ -2403,7 +2578,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 									  top,
 									  time[id],
 									  buysidecss,
-									  "Buy Side",
+									  'Buy Side',
 									  volume[id]
 									  )
 								  )
@@ -2428,14 +2603,14 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 									  time[bar_index - ms.loc],
 									  time,
 									  high[bar_index - ms.loc],
-									  "BOS",
+									  'BOS',
 									  upcss,
 									  line.style_dashed
 									  )
 								  )
 
 				if bar_index % mslen * 2 == 0
-					if not na(ms.bos) and msmode == "Puntos estrechos" and plp.size() > 0
+					if not na(ms.bos) and msmode == 'Puntos estrechos' and plp.size() > 0
 						if plp.get(0) > ms.choch
 							// ms.xloc  := pln.get(0)
 							ms.choch := plp.get(0)
@@ -2466,13 +2641,13 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 							dw        = bldw.get(0)
 							dw.x2    := time
 							dw.style := line.style_dotted
-							dw.txt   := "x"
+							dw.txt   := 'x'
 							bldw.unshift(
 								 drawms.new(
 									  time,
 									  time,
 									  high,
-									  "BOS",
+									  'BOS',
 									  upcss,
 									  line.style_dashed
 								 	  )
@@ -2487,7 +2662,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 									  top,
 									  time[id],
 									  buysidecss,
-									  "Buy Side",
+									  'Buy Side',
 									  volume[id]
 									  )
 								  )
@@ -2498,7 +2673,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 
 					close >= ms.bos and not na(ms.bos) =>
 						
-						ms.txt			:= "bos"
+						ms.txt			:= 'bos'
 						ms.zz			:= ms.bos
 						ms.zn			:= bar_index
 						lc.start		:= true
@@ -2528,13 +2703,13 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 							dw			= brdw.get(0)
 							dw.x2		:= time
 							dw.style	:= line.style_dotted
-							dw.txt		:= "x"
+							dw.txt		:= 'x'
 							brdw.unshift(
 								 drawms.new(
 									  time,
 									  time,
 									  low,
-									  "CHoCH",
+									  'CHoCH',
 									  dncss,
 									  line.style_dashed
 									  )
@@ -2542,7 +2717,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 
 					close <= ms.choch =>
 						
-						ms.txt			:= "choch"
+						ms.txt			:= 'choch'
 						ms.zz			:= ms.choch
 						ms.zn			:= bar_index
 						lc.start		:= true
@@ -2558,7 +2733,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 											  time,
 											  time,
 											  high,
-											  "BOS",
+											  'BOS',
 											  upcss,
 											  line.style_dashed
 											  )
@@ -2575,12 +2750,12 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						if draw
 							dw			= brdw.get(0)
 							dw.x2		:= time
-							dw.txt		:= "CHoCH"
+							dw.txt		:= 'CHoCH'
 							dw.style	:= internal ? line.style_dashed : line.style_solid
 							choch		= bldw.get(0)
 							choch.y		:= ms.choch
 							choch.x2	:= time
-							choch.txt	:= "CHoCH"
+							choch.txt	:= 'CHoCH'
 
 						if showside
 							id			= ms.find(true, true, true)
@@ -2591,7 +2766,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 									  btm,
 									  time[id],
 									  sidesidecss,
-									  "Sell Side",
+									  'Sell Side',
 									  volume[id]
 									  )
 								  )
@@ -2627,7 +2802,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 			if buyside.size() > 0 and sellside.size() > 0
 				sum  := buyside.get(0).vol + sellside.get(0).vol
 
-			if sidemode == "Area"
+			if sidemode == 'Area'
 				bin.bx.unshift(
 					  box.new(
 						  top			= side.top,
@@ -2671,8 +2846,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					  style				= label.style_label_up,
 					  textcolor			= color.new(side.css, 0),
 					  size				= size.small,
-					  //  , size			= mstext.txSz()
-					  text				= "Buyside - " + str.tostring(math.floor((side.vol / sum) * 100)) + "%"
+					  //  , size			= mstext.FunGlobalTextSize()
+					  text				= 'Buyside - ' + str.tostring(math.floor((side.vol / sum) * 100)) + '%'
 					  )
 				  )
 
@@ -2682,7 +2857,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 			if buyside.size() > 0 and sellside.size() > 0
 				sum  := buyside.get(0).vol + sellside.get(0).vol
 
-			if sidemode == "Area"
+			if sidemode == 'Area'
 				bin.bx.unshift(
 					 box.new(
 						  top			= side.top,
@@ -2727,8 +2902,8 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 					  style				= label.style_label_down,
 					  textcolor			= color.new(side.css, 0),
 					  size				= size.small,
-					//  , size			= mstext.txSz()
-					  text				= "Sellside - "+ str.tostring(math.floor((side.vol / sum) * 100)) + "%"
+					//  , size			= mstext.FunGlobalTextSize()
+					  text				= 'Sellside - '+ str.tostring(math.floor((side.vol / sum) * 100)) + '%'
 					  )
 				  )
 
@@ -2805,7 +2980,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						  color			= SmcBeColorBackGround,
 						  style			= label.style_label_down,
 						  textcolor		= obj.css,
-						  size			= mstext.txSz(),
+						  size			= mstext.FunGlobalTextSize(),
 						  text			= obj.txt
 						  )
 					  )
@@ -2844,7 +3019,7 @@ structure(color upcss, color dncss, bool draw, bool internal, int limit) =>
 						  color			= SmcBeColorBackGround,
 						  style			= label.style_label_up,
 						  textcolor		= obj.css,
-						  size			= mstext.txSz(),
+						  size			= mstext.FunGlobalTextSize(),
 						  text			= obj.txt
 						  )
 					  )
@@ -2891,7 +3066,7 @@ method darkcss(color css, float factor) =>
 	
 if windowsis ? (bar_index > last_bar_index - mswindow) : true
 	css									:= ms.trend == 1 ? swingcssup : swingcssdn
-	css									:= (ms.txt == "bos" ? css : css.darkcss(0.3))
+	css									:= (ms.txt == 'bos' ? css : css.darkcss(0.3))
 
 
 barcolor(candlecss ? css : na)
@@ -2982,32 +3157,43 @@ if ehlshow
 if showMapping
 	mapping()
 
-[uLIQ, dLIQ]						= posLIQ()
+[uLIQ, dLIQ]							= posLIQ()
 
-plotcandle(high, high, math.max(close, open), math.max(close, open), color = na, wickcolor = na, bordercolor = uLIQ and liqprint ? printupcs   : na)
-plotcandle(low , low , math.min(close, open), math.min(close, open), color = na, wickcolor = na, bordercolor = dLIQ and liqprint ? printdowncs : na)
+plotcandle(high, high,
+		  math.max(close, open),
+		  math.max(close, open),
+		  color							= na,
+		  wickcolor						= na,
+		  bordercolor					= uLIQ and liqprint ? printupcs   : na)
 
-var phl								= Zphl.new(
+plotcandle(low , low ,
+		  math.min(close, open),
+		  math.min(close, open),
+		  color							= na,
+		  wickcolor						= na,
+		  bordercolor					= dLIQ and liqprint ? printdowncs : na)
+
+var phl									= Zphl.new(
 		  na,
 		  na,
 		  label.new(na, na,
-		  		  color				= invcol,
-				  textcolor			= swingcssdn,
-				  style				= label.style_label_down,
-				  size				= size.tiny,
-				  text				= ""),
+		  		  color					= invcol,
+				  textcolor				= swingcssdn,
+				  style					= label.style_label_down,
+				  size					= size.tiny,
+				  text					= ''),
 		  label.new(na, na,
-		  		  color				= invcol,
-				  textcolor			= swingcssup,
-				  style				= label.style_label_up,
-				  size				= size.tiny,
-				  text				= ""),
+		  		  color					= invcol,
+				  textcolor				= swingcssup,
+				  style					= label.style_label_up,
+				  size					= size.tiny,
+				  text					= ''),
 		  true,
 		  true,
 		  true,
 		  true,
-		  "",
-		  "",
+		  '',
+		  '',
 		  0,
 		  0,
 		  0,
